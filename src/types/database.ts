@@ -26,6 +26,44 @@ export type Vote = {
   created_at: string;
 };
 
+export type Restaurant = {
+  id: string;
+  name: string;
+  address: string | null;
+  lat: number | null;
+  lng: number | null;
+  kakao_place_id: string | null;
+  memo: string | null;
+  created_by: string;
+  created_at: string;
+};
+
+export type Post = {
+  id: string;
+  author_id: string;
+  title: string;
+  body: string;
+  restaurant_id: string | null;
+  meeting_month: string; // YYYY-MM
+  created_at: string;
+};
+
+export type PostImage = {
+  id: string;
+  post_id: string;
+  storage_path: string;
+  sort_order: number;
+  created_at: string;
+};
+
+export type Comment = {
+  id: string;
+  post_id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -61,6 +99,72 @@ export type Database = {
           created_at?: string;
         };
         Update: never;
+        Relationships: [];
+      };
+      restaurants: {
+        Row: Restaurant;
+        Insert: {
+          id?: string;
+          name: string;
+          address?: string | null;
+          lat?: number | null;
+          lng?: number | null;
+          kakao_place_id?: string | null;
+          memo?: string | null;
+          created_by: string;
+          created_at?: string;
+        };
+        Update: {
+          name?: string;
+          address?: string | null;
+          lat?: number | null;
+          lng?: number | null;
+          kakao_place_id?: string | null;
+          memo?: string | null;
+        };
+        Relationships: [];
+      };
+      posts: {
+        Row: Post;
+        Insert: {
+          id?: string;
+          author_id: string;
+          title: string;
+          body?: string;
+          restaurant_id?: string | null;
+          meeting_month: string;
+          created_at?: string;
+        };
+        Update: {
+          title?: string;
+          body?: string;
+          restaurant_id?: string | null;
+          meeting_month?: string;
+        };
+        Relationships: [];
+      };
+      post_images: {
+        Row: PostImage;
+        Insert: {
+          id?: string;
+          post_id: string;
+          storage_path: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      comments: {
+        Row: Comment;
+        Insert: {
+          id?: string;
+          post_id: string;
+          author_id: string;
+          body: string;
+          created_at?: string;
+        };
+        Update: { body?: string };
         Relationships: [];
       };
     };
