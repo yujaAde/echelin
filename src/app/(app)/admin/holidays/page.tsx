@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { deleteHoliday } from "./actions";
 import { HolidayForm } from "./HolidayForm";
 
-export const metadata = { title: "공휴일 관리 | 맛집탐방 소모임" };
+export const metadata = { title: "공휴일 관리 | E슐랭" };
 
 export default function HolidaysPage() {
   return (

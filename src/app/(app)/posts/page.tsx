@@ -5,7 +5,7 @@ import { formatMonth } from "@/lib/calendar";
 import { displayName, formatDateTime, nicknameMap, signedUrlMap } from "@/lib/posts";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "모임 후기 | 맛집탐방 소모임" };
+export const metadata = { title: "모임 후기 | E슐랭" };
 
 export default function PostsPage() {
   return (

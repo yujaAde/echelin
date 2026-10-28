@@ -12,7 +12,7 @@ export async function SiteHeader() {
       <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
         <nav className="flex flex-wrap items-center gap-4 text-sm">
           <Link href="/" className="font-semibold">
-            맛집탐방 소모임
+            E슐랭
           </Link>
           <Link href="/votes" className={linkClass}>
             참석일 투표

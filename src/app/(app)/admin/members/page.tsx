@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/database";
 import { setApproved } from "./actions";
 
-export const metadata = { title: "회원 관리 | 맛집탐방 소모임" };
+export const metadata = { title: "회원 관리 | E슐랭" };
 
 export default function MembersPage() {
   return (

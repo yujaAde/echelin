@@ -4,7 +4,7 @@ import { monthOf, todayKST } from "@/lib/calendar";
 import { createClient } from "@/lib/supabase/server";
 import { PostForm } from "./PostForm";
 
-export const metadata = { title: "후기 쓰기 | 맛집탐방 소모임" };
+export const metadata = { title: "후기 쓰기 | E슐랭" };
 
 export default function NewPostPage() {
   return (

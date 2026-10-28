@@ -6,7 +6,7 @@ import { EditPostForm } from "./EditPostForm";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export const metadata = { title: "후기 수정 | 맛집탐방 소모임" };
+export const metadata = { title: "후기 수정 | E슐랭" };
 
 export default function EditPostPage(props: PageProps<"/posts/[id]/edit">) {
   return (

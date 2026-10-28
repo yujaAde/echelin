@@ -4,7 +4,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { getSession } from "@/lib/auth";
 import { SignupForm } from "./SignupForm";
 
-export const metadata = { title: "회원가입 | 맛집탐방 소모임" };
+export const metadata = { title: "회원가입 | E슐랭" };
 
 export default function SignupPage() {
   return (

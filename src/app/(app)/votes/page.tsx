@@ -13,7 +13,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { VoteForm } from "./VoteForm";
 
-export const metadata = { title: "참석일 투표 | 맛집탐방 소모임" };
+export const metadata = { title: "참석일 투표 | E슐랭" };
 
 export default function VotesPage(props: PageProps<"/votes">) {
   return (

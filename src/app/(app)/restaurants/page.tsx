@@ -4,7 +4,7 @@ import { nicknameMap } from "@/lib/posts";
 import { createClient } from "@/lib/supabase/server";
 import { RestaurantsClient, type RestaurantView } from "./RestaurantsClient";
 
-export const metadata = { title: "맛집 지도 | 맛집탐방 소모임" };
+export const metadata = { title: "맛집 지도 | E슐랭" };
 
 export default function RestaurantsPage() {
   return (

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "맛집탐방 소모임",
-  description: "맛집탐방 소모임 회원 전용 사이트",
+  title: "E슐랭",
+  description: "E슐랭 회원 전용 사이트",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -5,7 +5,7 @@ import { AuthCard, buttonClass } from "@/components/AuthCard";
 import { LogoutButton } from "@/components/LogoutButton";
 import { requireLogin } from "@/lib/auth";
 
-export const metadata = { title: "승인 대기 | 맛집탐방 소모임" };
+export const metadata = { title: "승인 대기 | E슐랭" };
 
 export default function PendingPage() {
   return (

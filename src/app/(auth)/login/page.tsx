@@ -4,7 +4,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { getSession } from "@/lib/auth";
 import { LoginForm } from "./LoginForm";
 
-export const metadata = { title: "로그인 | 맛집탐방 소모임" };
+export const metadata = { title: "로그인 | E슐랭" };
 
 export default function LoginPage(props: PageProps<"/login">) {
   return (
