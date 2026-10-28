@@ -12,6 +12,20 @@ export type Profile = {
   created_at: string;
 };
 
+export type Holiday = {
+  date: string; // YYYY-MM-DD
+  name: string;
+  created_at: string;
+};
+
+export type Vote = {
+  id: string;
+  user_id: string;
+  month: string; // YYYY-MM
+  date: string; // YYYY-MM-DD
+  created_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -29,6 +43,24 @@ export type Database = {
           nickname?: string;
           avatar_url?: string | null;
         };
+        Relationships: [];
+      };
+      holidays: {
+        Row: Holiday;
+        Insert: { date: string; name: string; created_at?: string };
+        Update: { date?: string; name?: string };
+        Relationships: [];
+      };
+      votes: {
+        Row: Vote;
+        Insert: {
+          id?: string;
+          user_id: string;
+          month: string;
+          date: string;
+          created_at?: string;
+        };
+        Update: never;
         Relationships: [];
       };
     };
