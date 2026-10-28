@@ -98,6 +98,13 @@ export async function signup(
   redirect("/pending");
 }
 
+// 승인 대기 화면의 "다시 확인" 버튼. 승인됐으면 홈으로, 아니면 안내 문구를 돌려준다.
+export async function recheckApproval(): Promise<AuthFormState> {
+  const { profile } = await requireLogin();
+  if (profile?.approved) redirect("/");
+  return { error: "아직 승인되지 않았습니다. 운영진의 승인을 기다려 주세요." };
+}
+
 export async function logout(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();

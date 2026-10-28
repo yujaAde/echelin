@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AuthCard, buttonClass } from "@/components/AuthCard";
+import { AuthCard } from "@/components/AuthCard";
 import { LogoutButton } from "@/components/LogoutButton";
 import { displayLoginId } from "@/lib/account";
 import { requireLogin } from "@/lib/auth";
+import { RecheckButton } from "./RecheckButton";
 
 export const metadata = { title: "승인 대기 | E슐랭" };
 
@@ -32,9 +33,7 @@ async function PendingBody() {
         가입이 접수되었습니다. 관리자가 승인하면 사이트를 이용할 수 있습니다.
         승인이 늦어지면 모임 운영진에게 알려 주세요.
       </p>
-      <Link href="/pending" className={`${buttonClass} block text-center`}>
-        승인 여부 다시 확인
-      </Link>
+      <RecheckButton />
       <div className="flex justify-center gap-3">
         <Link
           href="/account/password"
