@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -22,5 +22,6 @@ export async function setApproved(formData: FormData): Promise<void> {
     throw new Error(`승인 상태 변경에 실패했습니다. (${error.message})`);
   }
 
-  revalidatePath("/admin/members");
+  // DB 는 캐시 밖 데이터이므로 현재 경로의 RSC 를 다시 받아 화면을 갱신한다
+  refresh();
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { requireApproved } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -14,8 +14,7 @@ function text(formData: FormData, name: string): string {
 }
 
 function revalidate() {
-  revalidatePath("/restaurants");
-  revalidatePath("/posts/new");
+  refresh();
 }
 
 export async function addRestaurant(

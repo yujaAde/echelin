@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { requireApproved } from "@/lib/auth";
 import {
   addMonths,
@@ -65,7 +65,7 @@ export async function saveVotes(
     }
   }
 
-  revalidatePath("/votes");
+  refresh();
   return {
     success:
       dates.length === 0

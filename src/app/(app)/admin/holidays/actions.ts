@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { isDateString } from "@/lib/calendar";
 import { createClient } from "@/lib/supabase/server";
@@ -8,8 +8,8 @@ import { createClient } from "@/lib/supabase/server";
 export type HolidayFormState = { error?: string; success?: string };
 
 function revalidate() {
-  revalidatePath("/admin/holidays");
-  revalidatePath("/votes");
+  // 페이지 데이터는 캐시하지 않으므로 현재 경로만 다시 가져오면 된다
+  refresh();
 }
 
 export async function addHoliday(

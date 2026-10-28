@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireApproved } from "@/lib/auth";
 import { isMonthString } from "@/lib/calendar";
@@ -84,8 +84,6 @@ export async function createPost(
       return { error: `사진 정보 저장에 실패했습니다. (${imageError.message})` };
     }
   }
-
-  revalidatePath("/posts");
   redirect(`/posts/${post.id}`);
 }
 
@@ -114,9 +112,6 @@ export async function updatePost(
     .select("id");
   if (error) return { error: `수정에 실패했습니다. (${error.message})` };
   if (!data || data.length === 0) return { error: "수정 권한이 없거나 글이 없습니다." };
-
-  revalidatePath("/posts");
-  revalidatePath(`/posts/${id}`);
   redirect(`/posts/${id}`);
 }
 
@@ -152,8 +147,6 @@ export async function deletePost(formData: FormData): Promise<void> {
 
   const { error } = await supabase.from("posts").delete().eq("id", id);
   if (error) throw new Error(`삭제에 실패했습니다. (${error.message})`);
-
-  revalidatePath("/posts");
   redirect("/posts");
 }
 
@@ -176,8 +169,7 @@ export async function addComment(
     .insert({ post_id: postId, author_id: user.id, body });
   if (error) return { error: `댓글 저장에 실패했습니다. (${error.message})` };
 
-  revalidatePath(`/posts/${postId}`);
-  revalidatePath("/posts");
+  refresh();
   return {};
 }
 
@@ -192,6 +184,5 @@ export async function deleteComment(formData: FormData): Promise<void> {
   const { error } = await supabase.from("comments").delete().eq("id", id);
   if (error) throw new Error(`댓글 삭제에 실패했습니다. (${error.message})`);
 
-  revalidatePath(`/posts/${postId}`);
-  revalidatePath("/posts");
+  refresh();
 }
