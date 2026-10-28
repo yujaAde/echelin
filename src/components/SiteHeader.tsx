@@ -20,6 +20,9 @@ export async function SiteHeader() {
           <Link href="/posts" className={linkClass}>
             모임 후기
           </Link>
+          <Link href="/restaurants" className={linkClass}>
+            맛집 지도
+          </Link>
           {profile.role === "admin" && (
             <>
               <Link href="/admin/members" className={linkClass}>

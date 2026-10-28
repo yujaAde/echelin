@@ -17,23 +17,24 @@ async function Home() {
   const { profile } = await requireApproved();
   return (
     <section className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">{profile.nickname}님, 반갑습니다</h1>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          맛집 지도 기능이 곧 추가될 예정입니다.
-        </p>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <h1 className="text-2xl font-semibold">{profile.nickname}님, 반갑습니다</h1>
+      <div className="grid gap-3 sm:grid-cols-3">
         <Link href="/votes" className={cardClass}>
-          <p className="font-medium">다음 모임 참석 가능일 투표</p>
+          <p className="font-medium">참석 가능일 투표</p>
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            참석할 수 있는 날짜를 고르고 집계를 확인하세요.
+            다음 모임에 참석할 수 있는 날짜를 고르고 집계를 확인하세요.
           </p>
         </Link>
         <Link href="/posts" className={cardClass}>
           <p className="font-medium">모임 후기</p>
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
             다녀온 모임의 사진과 이야기를 남기고 댓글을 달아 보세요.
+          </p>
+        </Link>
+        <Link href="/restaurants" className={cardClass}>
+          <p className="font-medium">맛집 지도</p>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            가 보고 싶은 맛집을 검색해 저장하고 지도에서 확인하세요.
           </p>
         </Link>
       </div>
