@@ -15,12 +15,28 @@ export function LoginForm({ initialError }: { initialError?: string }) {
     <form action={formAction} className="space-y-4">
       <FormMessage error={state.error} />
       <div className="space-y-1">
-        <label htmlFor="email" className="text-sm font-medium">이메일</label>
-        <input id="email" name="email" type="email" autoComplete="email" required className={inputClass} />
+        <label htmlFor="login_id" className="text-sm font-medium">아이디</label>
+        <input
+          id="login_id"
+          name="login_id"
+          type="text"
+          autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
+          required
+          className={inputClass}
+        />
       </div>
       <div className="space-y-1">
         <label htmlFor="password" className="text-sm font-medium">비밀번호</label>
-        <input id="password" name="password" type="password" autoComplete="current-password" required className={inputClass} />
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          required
+          className={inputClass}
+        />
       </div>
       <button type="submit" disabled={pending} className={buttonClass}>
         {pending ? "로그인 중..." : "로그인"}
@@ -30,6 +46,9 @@ export function LoginForm({ initialError }: { initialError?: string }) {
         <Link href="/signup" className="font-medium text-neutral-900 underline dark:text-neutral-100">
           회원가입
         </Link>
+      </p>
+      <p className="text-center text-xs text-neutral-500">
+        비밀번호를 잊으셨다면 운영진에게 초기화를 요청해 주세요.
       </p>
     </form>
   );

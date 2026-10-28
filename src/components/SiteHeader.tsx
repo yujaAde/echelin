@@ -35,7 +35,9 @@ export async function SiteHeader() {
           )}
         </nav>
         <div className="flex items-center gap-3 text-sm">
-          <span className="text-neutral-600 dark:text-neutral-400">{profile.nickname}</span>
+          <Link href="/account/password" className="text-neutral-600 hover:underline dark:text-neutral-400">
+            {profile.nickname}
+          </Link>
           <LogoutButton />
         </div>
       </div>

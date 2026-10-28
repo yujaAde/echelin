@@ -1,8 +1,11 @@
 import { Suspense } from "react";
+import { displayLoginId } from "@/lib/account";
 import { requireAdmin } from "@/lib/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/database";
 import { setApproved } from "./actions";
+import { ResetPasswordButton } from "./ResetPasswordButton";
 
 export const metadata = { title: "회원 관리 | E슐랭" };
 
@@ -20,10 +23,10 @@ export default function MembersPage() {
 async function MemberLists() {
   const { user } = await requireAdmin();
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .order("created_at", { ascending: true });
+  const [{ data, error }, loginIds] = await Promise.all([
+    supabase.from("profiles").select("*").order("created_at", { ascending: true }),
+    loadLoginIds(),
+  ]);
 
   if (error) {
     return <p className="text-sm text-red-700">회원 목록을 불러오지 못했습니다. ({error.message})</p>;
@@ -39,27 +42,39 @@ async function MemberLists() {
         title={`승인 대기 (${pending.length})`}
         emptyText="승인 대기 중인 회원이 없습니다."
         profiles={pending}
+        loginIds={loginIds}
         currentUserId={user.id}
       />
       <MemberTable
         title={`승인된 회원 (${approved.length})`}
         emptyText="승인된 회원이 없습니다."
         profiles={approved}
+        loginIds={loginIds}
         currentUserId={user.id}
       />
     </>
   );
 }
 
+// 아이디는 auth.users.email 에만 있으므로 관리자 페이지에서만 service_role 로 읽는다.
+async function loadLoginIds(): Promise<Map<string, string>> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  if (error || !data) return new Map();
+  return new Map(data.users.map((u) => [u.id, displayLoginId(u.email)]));
+}
+
 function MemberTable({
   title,
   emptyText,
   profiles,
+  loginIds,
   currentUserId,
 }: {
   title: string;
   emptyText: string;
   profiles: Profile[];
+  loginIds: Map<string, string>;
   currentUserId: string;
 }) {
   return (
@@ -73,6 +88,7 @@ function MemberTable({
             <thead className="bg-neutral-50 text-left text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400">
               <tr>
                 <th className="px-4 py-2 font-medium">닉네임</th>
+                <th className="px-4 py-2 font-medium">아이디</th>
                 <th className="px-4 py-2 font-medium">역할</th>
                 <th className="px-4 py-2 font-medium">가입일</th>
                 <th className="px-4 py-2 text-right font-medium">작업</th>
@@ -82,6 +98,9 @@ function MemberTable({
               {profiles.map((p) => (
                 <tr key={p.id} className="border-t border-neutral-200 dark:border-neutral-800">
                   <td className="px-4 py-2">{p.nickname}</td>
+                  <td className="px-4 py-2 text-neutral-600 dark:text-neutral-400">
+                    {loginIds.get(p.id) ?? "(알 수 없음)"}
+                  </td>
                   <td className="px-4 py-2">{p.role === "admin" ? "관리자" : "회원"}</td>
                   <td className="px-4 py-2 text-neutral-600 dark:text-neutral-400">
                     {new Date(p.created_at).toLocaleDateString("ko-KR")}
@@ -90,7 +109,10 @@ function MemberTable({
                     {p.id === currentUserId ? (
                       <span className="text-xs text-neutral-500">본인</span>
                     ) : (
-                      <ApproveButton id={p.id} approved={p.approved} />
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        <ApproveButton id={p.id} approved={p.approved} />
+                        <ResetPasswordButton id={p.id} nickname={p.nickname} />
+                      </div>
                     )}
                   </td>
                 </tr>
