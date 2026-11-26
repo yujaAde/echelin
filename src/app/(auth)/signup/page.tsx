@@ -9,7 +9,7 @@ export const metadata = { title: "회원가입 | E슐랭" };
 export default function SignupPage() {
   return (
     <AuthCard title="회원가입">
-      <Suspense fallback={<p className="text-center text-sm text-neutral-500">불러오는 중...</p>}>
+      <Suspense fallback={<p className="text-center text-sm text-ink-soft">불러오는 중...</p>}>
         <SignupGate />
       </Suspense>
     </AuthCard>

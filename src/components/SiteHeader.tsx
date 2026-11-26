@@ -1,48 +1,38 @@
 import Link from "next/link";
 import { LogoutButton } from "@/components/LogoutButton";
+import { SiteNav } from "@/components/SiteNav";
 import { requireApproved } from "@/lib/auth";
-
-const linkClass = "text-neutral-600 hover:underline dark:text-neutral-400";
 
 export async function SiteHeader() {
   const { profile } = await requireApproved();
 
   return (
-    <header className="border-b border-neutral-200 dark:border-neutral-800">
-      <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
-        <nav className="flex flex-wrap items-center gap-4 text-sm">
-          <Link href="/" className="font-semibold">
-            E슐랭
+    <header className="sticky top-0 z-20 border-b border-line bg-paper/95 backdrop-blur">
+      <div className="mx-auto max-w-3xl px-4">
+        <div className="flex h-14 items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/icons/icon-192.png"
+              alt=""
+              width={32}
+              height={32}
+              className="size-8 rounded-full border border-accent"
+            />
+            <span className="font-display text-2xl leading-none text-ink">E슐랭</span>
           </Link>
-          <Link href="/votes" className={linkClass}>
-            참석일 투표
-          </Link>
-          <Link href="/posts" className={linkClass}>
-            모임 후기
-          </Link>
-          <Link href="/board" className={linkClass}>
-            자유게시판
-          </Link>
-          <Link href="/restaurants" className={linkClass}>
-            맛집 지도
-          </Link>
-          {profile.role === "admin" && (
-            <>
-              <Link href="/admin/members" className={linkClass}>
-                회원 관리
-              </Link>
-              <Link href="/admin/holidays" className={linkClass}>
-                공휴일 관리
-              </Link>
-            </>
-          )}
-        </nav>
-        <div className="flex items-center gap-3 text-sm">
-          <Link href="/account/password" className="text-neutral-600 hover:underline dark:text-neutral-400">
-            {profile.nickname}
-          </Link>
-          <LogoutButton />
+          <div className="flex items-center gap-3 text-sm">
+            <Link
+              href="/account/password"
+              className="max-w-32 truncate text-ink-soft hover:text-ink"
+              title="비밀번호 변경"
+            >
+              {profile.nickname}
+            </Link>
+            <LogoutButton />
+          </div>
         </div>
+        <SiteNav isAdmin={profile.role === "admin"} />
       </div>
     </header>
   );

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { EditPostForm } from "@/components/posts/EditPostForm";
+import { pageTitle } from "@/components/ui";
 import { requireApproved } from "@/lib/auth";
 import { BOARDS, postPath, type Board } from "@/lib/boards";
 import { createClient } from "@/lib/supabase/server";
@@ -13,8 +14,8 @@ type Params = Promise<{ id: string }>;
 export function EditPostPage({ board, params }: { board: Board; params: Params }) {
   return (
     <section className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-2xl font-semibold">{BOARDS[board].editTitle}</h1>
-      <Suspense fallback={<p className="text-sm text-neutral-500">불러오는 중...</p>}>
+      <h1 className={pageTitle}>{BOARDS[board].editTitle}</h1>
+      <Suspense fallback={<p className="text-sm text-ink-soft">불러오는 중...</p>}>
         <EditPostBody board={board} params={params} />
       </Suspense>
     </section>

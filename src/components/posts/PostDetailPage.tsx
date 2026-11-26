@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { deleteComment, deletePost } from "@/app/(app)/posts/actions";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { CommentForm } from "@/components/posts/CommentForm";
+import { btnSmall, btnSmallDanger, sectionTitle } from "@/components/ui";
 import { requireApproved } from "@/lib/auth";
 import { BOARDS, postPath, type Board } from "@/lib/boards";
 import { formatMonth } from "@/lib/calendar";
@@ -12,15 +13,12 @@ import { createClient } from "@/lib/supabase/server";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const smallButton =
-  "rounded-md border border-neutral-300 px-2.5 py-1 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800";
-
 type Params = Promise<{ id: string }>;
 
 // 후기·자유게시판 공용 글 상세 화면
 export function PostDetailPage({ board, params }: { board: Board; params: Params }) {
   return (
-    <Suspense fallback={<p className="text-sm text-neutral-500">불러오는 중...</p>}>
+    <Suspense fallback={<p className="text-sm text-ink-soft">불러오는 중...</p>}>
       <PostDetail board={board} params={params} />
     </Suspense>
   );
@@ -58,27 +56,37 @@ async function PostDetail({ board, params }: { board: Board; params: Params }) {
   const canEditPost = post.author_id === user.id;
   const canDeletePost = canEditPost || isAdmin;
   const cfg = BOARDS[board];
-  const meta = [
-    board === "review" && post.meeting_month ? `${formatMonth(post.meeting_month)} 모임` : null,
-    displayName(names, post.author_id),
-    formatDateTime(post.created_at),
-  ].filter(Boolean);
 
   return (
     <article className="mx-auto max-w-2xl space-y-8">
-      <header className="space-y-2">
-        <Link href={cfg.path} className="text-sm text-neutral-500 hover:underline">
+      <header className="space-y-3">
+        <Link href={cfg.path} className="text-sm text-ink-soft hover:text-ink">
           ← {cfg.title}
         </Link>
-        <h1 className="text-2xl font-semibold">{post.title}</h1>
-        <p className="text-sm text-neutral-500">{meta.join(" · ")}</p>
-        {board === "review" && restaurant && (
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">맛집: {restaurant.name}</p>
-        )}
+        <div className="space-y-2">
+          {board === "review" && post.meeting_month && (
+            <span className="inline-block rounded-md bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand">
+              {formatMonth(post.meeting_month)} 모임
+            </span>
+          )}
+          <h1 className="text-2xl font-semibold leading-snug text-ink">{post.title}</h1>
+          <p className="flex flex-wrap gap-x-3 text-sm text-ink-faint">
+            <span className="text-ink-soft">{displayName(names, post.author_id)}</span>
+            <span>{formatDateTime(post.created_at)}</span>
+          </p>
+          {board === "review" && restaurant && (
+            <p className="text-sm text-ink-soft">
+              다녀온 곳{" "}
+              <Link href="/restaurants" className="font-medium text-brand hover:underline">
+                {restaurant.name}
+              </Link>
+            </p>
+          )}
+        </div>
         {canDeletePost && (
-          <div className="flex gap-2 pt-1">
+          <div className="flex gap-2">
             {canEditPost && (
-              <Link href={`${postPath(board, post.id)}/edit`} className={smallButton}>
+              <Link href={`${postPath(board, post.id)}/edit`} className={btnSmall}>
                 수정
               </Link>
             )}
@@ -86,7 +94,7 @@ async function PostDetail({ board, params }: { board: Board; params: Params }) {
               action={deletePost}
               hidden={{ id: post.id }}
               message={cfg.deleteConfirm}
-              className={smallButton}
+              className={btnSmallDanger}
             >
               삭제
             </ConfirmButton>
@@ -104,7 +112,7 @@ async function PostDetail({ board, params }: { board: Board; params: Params }) {
                 href={url}
                 target="_blank"
                 rel="noreferrer"
-                className="aspect-square overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800"
+                className="aspect-square overflow-hidden rounded-lg bg-surface-muted"
               >
                 {url && (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -117,34 +125,32 @@ async function PostDetail({ board, params }: { board: Board; params: Params }) {
       )}
 
       {post.body && (
-        <div className="whitespace-pre-wrap text-sm leading-relaxed">{post.body}</div>
+        <div className="whitespace-pre-wrap text-[15px] leading-relaxed text-ink">{post.body}</div>
       )}
 
-      <section className="space-y-4 border-t border-neutral-200 pt-6 dark:border-neutral-800">
-        <h2 className="text-lg font-medium">댓글 {comments.length}</h2>
+      <section className="space-y-4 border-t border-line pt-6">
+        <h2 className={sectionTitle}>댓글 {comments.length}</h2>
         {comments.length > 0 && (
-          <ul className="space-y-3">
+          <ul className="space-y-2">
             {comments.map((c) => (
-              <li key={c.id} className="rounded-md bg-neutral-50 px-4 py-3 text-sm dark:bg-neutral-900">
+              <li key={c.id} className="rounded-lg bg-surface px-4 py-3 text-sm">
                 <div className="mb-1 flex items-center justify-between gap-2">
-                  <span className="text-xs text-neutral-500">
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
-                      {displayName(names, c.author_id)}
-                    </span>{" "}
-                    · {formatDateTime(c.created_at)}
+                  <span className="flex flex-wrap gap-x-2 text-xs text-ink-faint">
+                    <span className="font-medium text-ink">{displayName(names, c.author_id)}</span>
+                    <span>{formatDateTime(c.created_at)}</span>
                   </span>
                   {(c.author_id === user.id || isAdmin) && (
                     <ConfirmButton
                       action={deleteComment}
                       hidden={{ id: c.id, post_id: post.id }}
                       message="댓글을 삭제할까요?"
-                      className="text-xs text-neutral-500 hover:underline"
+                      className="text-xs text-ink-faint hover:text-danger"
                     >
                       삭제
                     </ConfirmButton>
                   )}
                 </div>
-                <p className="whitespace-pre-wrap">{c.body}</p>
+                <p className="whitespace-pre-wrap text-ink">{c.body}</p>
               </li>
             ))}
           </ul>

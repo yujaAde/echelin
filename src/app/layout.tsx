@@ -34,8 +34,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: "#fbf5e6" },
+    { media: "(prefers-color-scheme: dark)", color: "#15181e" },
   ],
 };
 
@@ -43,6 +43,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className="h-full antialiased">
       <head>
+        {/* 제목용 서체. 본문은 시스템 고딕을 쓴다 (globals.css) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* 루트 레이아웃이라 모든 페이지에 적용된다. App Router 에서는 이 경고가 해당되지 않는다. */}
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap"
+        />
         {/* 안드로이드 설치 이벤트는 앱이 뜨기 전에 올 수 있어 가장 먼저 붙잡아 둔다. InstallGuide 가 읽는다. */}
         <script
           dangerouslySetInnerHTML={{

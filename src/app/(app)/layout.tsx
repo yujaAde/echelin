@@ -4,10 +4,10 @@ import { SiteHeader } from "@/components/SiteHeader";
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <>
-      <Suspense fallback={<div className="h-14 border-b border-neutral-200 dark:border-neutral-800" />}>
+      <Suspense fallback={<div className="h-24 border-b border-line" />}>
         <SiteHeader />
       </Suspense>
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:py-8">{children}</main>
     </>
   );
 }

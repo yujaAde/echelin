@@ -98,7 +98,7 @@ function openExternalBrowser() {
 }
 
 const primaryButton =
-  "w-full rounded-md bg-neutral-900 px-4 py-2.5 font-medium text-white hover:bg-neutral-700 sm:w-auto dark:bg-neutral-100 dark:text-neutral-900";
+  "inline-flex w-full items-center justify-center rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand hover:bg-brand-strong sm:w-auto";
 
 export function InstallGuide() {
   const platform = useSyncExternalStore(subscribe, detectPlatform, () => "server" as Platform);
@@ -131,7 +131,7 @@ export function InstallGuide() {
   if (inApp) {
     body = (
       <div className="space-y-2">
-        <p className="text-neutral-700 dark:text-neutral-300">
+        <p className="text-ink-soft">
           카카오톡 안에서는 설치할 수 없어요. 아래 버튼으로 브라우저에서 연 다음 설치해 주세요.
         </p>
         <button type="button" onClick={openExternalBrowser} className={primaryButton}>
@@ -141,7 +141,7 @@ export function InstallGuide() {
     );
   } else if (platform === "ios") {
     body = (
-      <ol className="space-y-2 text-neutral-700 dark:text-neutral-300">
+      <ol className="space-y-2 text-ink-soft">
         <li className="flex items-center gap-2">
           <span className="w-5 shrink-0 text-center font-semibold">1</span>
           <span>Safari 아래쪽 공유 버튼</span>
@@ -168,7 +168,7 @@ export function InstallGuide() {
     );
   } else {
     body = (
-      <ol className="list-decimal space-y-1 pl-5 text-neutral-700 dark:text-neutral-300">
+      <ol className="list-decimal space-y-1 pl-5 text-ink-soft">
         <li>브라우저 오른쪽 위 메뉴(점 세 개)를 누르세요.</li>
         <li>&quot;홈 화면에 추가&quot; 또는 &quot;앱 설치&quot;를 선택하세요.</li>
       </ol>
@@ -176,13 +176,13 @@ export function InstallGuide() {
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm dark:border-amber-800 dark:bg-amber-950/40">
+    <div className="space-y-3 rounded-card border border-accent bg-accent-soft px-4 py-3 text-sm text-ink">
       <p className="font-medium">홈 화면에 추가하면 앱처럼 바로 열 수 있어요</p>
       {body}
       <button
         type="button"
         onClick={writeDismissed}
-        className="text-xs text-neutral-500 underline hover:text-neutral-700 dark:hover:text-neutral-300"
+        className="text-xs text-ink-faint underline hover:text-ink"
       >
         다시 보지 않기
       </button>
@@ -196,7 +196,7 @@ function ShareIcon() {
     <svg
       aria-label="공유 아이콘"
       viewBox="0 0 24 24"
-      className="inline-block size-6 shrink-0 rounded border border-neutral-300 bg-white p-0.5 text-blue-600 dark:border-neutral-600 dark:bg-neutral-900"
+      className="inline-block size-6 shrink-0 rounded border border-line bg-surface p-0.5 text-brand"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.8"
@@ -216,7 +216,7 @@ function AddIcon() {
     <svg
       aria-label="홈 화면에 추가 아이콘"
       viewBox="0 0 24 24"
-      className="inline-block size-6 shrink-0 rounded border border-neutral-300 bg-white p-0.5 text-neutral-800 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100"
+      className="inline-block size-6 shrink-0 rounded border border-line bg-surface p-0.5 text-ink"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.8"

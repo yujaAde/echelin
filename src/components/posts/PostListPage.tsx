@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { btnPrimary, listBox, pageTitle } from "@/components/ui";
 import { requireApproved } from "@/lib/auth";
 import { BOARDS, postPath, type Board } from "@/lib/boards";
 import { formatMonth } from "@/lib/calendar";
@@ -10,17 +11,14 @@ import { createClient } from "@/lib/supabase/server";
 export function PostListPage({ board }: { board: Board }) {
   const cfg = BOARDS[board];
   return (
-    <section className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold">{cfg.title}</h1>
-        <Link
-          href={`${cfg.path}/new`}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
-        >
+    <section className="space-y-5">
+      <div className="flex items-end justify-between gap-4">
+        <h1 className={pageTitle}>{cfg.title}</h1>
+        <Link href={`${cfg.path}/new`} className={btnPrimary}>
           {cfg.writeLabel}
         </Link>
       </div>
-      <Suspense fallback={<p className="text-sm text-neutral-500">불러오는 중...</p>}>
+      <Suspense fallback={<p className="text-sm text-ink-soft">불러오는 중...</p>}>
         <PostList board={board} />
       </Suspense>
     </section>
@@ -38,10 +36,14 @@ async function PostList({ board }: { board: Board }) {
     .order("created_at", { ascending: false })
     .limit(50);
   if (error) {
-    return <p className="text-sm text-red-700">글을 불러오지 못했습니다. ({error.message})</p>;
+    return <p className="text-sm text-danger">글을 불러오지 못했습니다. ({error.message})</p>;
   }
   if (!posts || posts.length === 0) {
-    return <p className="text-sm text-neutral-500">{BOARDS[board].emptyText}</p>;
+    return (
+      <div className="rounded-card border border-dashed border-line px-4 py-10 text-center">
+        <p className="text-sm text-ink-soft">{BOARDS[board].emptyText}</p>
+      </div>
+    );
   }
 
   const postIds = posts.map((p) => p.id);
@@ -68,35 +70,38 @@ async function PostList({ board }: { board: Board }) {
   const urls = await signedUrlMap(supabase, [...thumbPath.values()]);
 
   return (
-    <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+    <ul className={listBox}>
       {posts.map((p) => {
         const thumb = thumbPath.get(p.id);
         const url = thumb ? urls.get(thumb) : undefined;
         const images = imageCount.get(p.id) ?? 0;
-        const meta = [
-          board === "review" && p.meeting_month ? `${formatMonth(p.meeting_month)} 모임` : null,
-          displayName(names, p.author_id),
-          formatDateTime(p.created_at),
-        ].filter(Boolean);
+        const comments = commentCount.get(p.id) ?? 0;
         return (
           <li key={p.id}>
             <Link
               href={postPath(board, p.id)}
-              className="flex items-center gap-4 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-900"
+              className="flex items-center gap-4 px-4 py-3 hover:bg-surface-muted"
             >
               {(board === "review" || url) && (
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-800">
+                <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-surface-muted">
                   {url && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={url} alt="" className="h-full w-full object-cover" />
                   )}
                 </div>
               )}
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">{p.title}</p>
-                <p className="text-xs text-neutral-500">{meta.join(" · ")}</p>
-                <p className="text-xs text-neutral-500">
-                  {images > 0 && <>사진 {images} · </>}댓글 {commentCount.get(p.id) ?? 0}
+              <div className="min-w-0 flex-1 space-y-1">
+                {board === "review" && p.meeting_month && (
+                  <span className="inline-block rounded-md bg-brand-soft px-1.5 py-0.5 text-xs font-medium text-brand">
+                    {formatMonth(p.meeting_month)} 모임
+                  </span>
+                )}
+                <p className="truncate font-semibold text-ink">{p.title}</p>
+                <p className="flex flex-wrap gap-x-3 text-xs text-ink-faint">
+                  <span className="text-ink-soft">{displayName(names, p.author_id)}</span>
+                  <span>{formatDateTime(p.created_at)}</span>
+                  {images > 0 && <span>사진 {images}</span>}
+                  {comments > 0 && <span>댓글 {comments}</span>}
                 </p>
               </div>
             </Link>

@@ -1,19 +1,30 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { btnPrimary, inputClass as input } from "@/components/ui";
 
+// 로그인·가입·승인 대기·비밀번호 변경이 함께 쓰는 틀. 마스코트와 이름이 머리말이 된다.
 export function AuthCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <main className="flex flex-1 items-center justify-center p-6">
-      <div className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <p className="mb-1 text-center text-sm text-neutral-500">E슐랭</p>
-        <h1 className="mb-6 text-center text-xl font-semibold">{title}</h1>
+    <main className="flex flex-1 flex-col items-center justify-center px-4 py-10">
+      <Link href="/" className="mb-6 flex flex-col items-center gap-2">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/icons/icon-192.png"
+          alt=""
+          width={64}
+          height={64}
+          className="size-16 rounded-full border-2 border-accent"
+        />
+        <span className="font-display text-3xl leading-none text-ink">E슐랭</span>
+      </Link>
+      <div className="w-full max-w-sm rounded-card border border-line bg-surface p-6 sm:p-8">
+        <h1 className="mb-5 text-xl font-semibold text-ink">{title}</h1>
         {children}
       </div>
     </main>
   );
 }
 
-export const inputClass =
-  "w-full rounded-md border border-neutral-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 dark:border-neutral-700 dark:focus:border-neutral-100 dark:focus:ring-neutral-100";
-
-export const buttonClass =
-  "w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300";
+// 예전 이름을 쓰는 폼들을 위해 그대로 내보낸다
+export const inputClass = input;
+export const buttonClass = `${btnPrimary} w-full`;

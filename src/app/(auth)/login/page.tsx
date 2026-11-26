@@ -9,7 +9,7 @@ export const metadata = { title: "로그인 | E슐랭" };
 export default function LoginPage(props: PageProps<"/login">) {
   return (
     <AuthCard title="로그인">
-      <Suspense fallback={<p className="text-center text-sm text-neutral-500">불러오는 중...</p>}>
+      <Suspense fallback={<p className="text-center text-sm text-ink-soft">불러오는 중...</p>}>
         <LoginGate searchParams={props.searchParams} />
       </Suspense>
     </AuthCard>

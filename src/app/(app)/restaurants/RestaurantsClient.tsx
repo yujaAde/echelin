@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
-import { inputClass } from "@/components/AuthCard";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { FormMessage } from "@/components/FormMessage";
+import { btnPrimary, btnSmall, btnSmallDanger, btnSmallPrimary, inputClass, listBox, sectionTitle } from "@/components/ui";
 import { escapeHtml, loadKakaoMaps } from "@/lib/kakao";
 import { addRestaurant, deleteRestaurant, updateRestaurantMemo, type RestaurantFormState } from "./actions";
 
@@ -24,11 +24,6 @@ type SearchItem = kakao.maps.services.PlacesSearchResultItem;
 
 // 저장된 맛집이 없을 때의 기본 중심 (서울시청)
 const DEFAULT_CENTER = { lat: 37.5665, lng: 126.978 };
-
-const smallButton =
-  "rounded-md border border-neutral-300 px-2.5 py-1 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800";
-const primarySmallButton =
-  "rounded-md bg-neutral-900 px-3 py-1 text-xs font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900";
 
 export function RestaurantsClient({
   restaurants,
@@ -170,8 +165,8 @@ export function RestaurantsClient({
           setResults([]);
           setSearchMessage(
             status === window.kakao.maps.services.Status.ZERO_RESULT
-              ? "검색 결과가 없습니다."
-              : "검색 중 오류가 발생했습니다.",
+              ? "찾은 곳이 없습니다. 가게 이름이나 동네를 바꿔 보세요."
+              : "검색하다 문제가 생겼습니다. 잠시 뒤 다시 시도해 주세요.",
           );
         }
       },
@@ -183,36 +178,37 @@ export function RestaurantsClient({
     <div className="space-y-8">
       <div
         ref={mapEl}
-        className="h-80 w-full rounded-lg border border-neutral-200 bg-neutral-100 sm:h-96 dark:border-neutral-800 dark:bg-neutral-900"
+        className="h-80 w-full overflow-hidden rounded-card border border-line bg-surface-muted sm:h-96"
       />
       {mapError && <FormMessage error={mapError} />}
 
       {/* 검색 */}
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">맛집 검색</h2>
+        <h2 className={sectionTitle}>맛집 찾기</h2>
         <form onSubmit={search} className="flex gap-2">
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="가게 이름이나 지역 + 메뉴 (예: 성수동 파스타)"
+            placeholder="가게 이름, 또는 동네와 메뉴 (예: 성수동 파스타)"
+            aria-label="검색어"
             disabled={!ready}
             className={inputClass}
           />
-          <button type="submit" disabled={!ready || searching} className={`${primarySmallButton} shrink-0 px-4 py-2 text-sm`}>
-            {searching ? "검색 중..." : "검색"}
+          <button type="submit" disabled={!ready || searching} className={`${btnPrimary} shrink-0`}>
+            {searching ? "찾는 중..." : "검색"}
           </button>
         </form>
-        {searchMessage && <p className="text-sm text-neutral-500">{searchMessage}</p>}
+        {searchMessage && <p className="text-sm text-ink-soft">{searchMessage}</p>}
         <FormMessage error={saveState.error} success={saveState.success} />
 
         {results.length > 0 && (
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+          <ul className={listBox}>
             {results.map((item) => {
               const isSaved = savedPlaceIds.has(item.id);
               const isSelected = selected?.id === item.id;
               return (
-                <li key={item.id} className="space-y-2 px-4 py-3 text-sm">
+                <li key={item.id} className={`space-y-2 px-4 py-3 text-sm ${isSelected ? "bg-accent-soft" : ""}`}>
                   <div className="flex items-start justify-between gap-3">
                     <button
                       type="button"
@@ -222,14 +218,14 @@ export function RestaurantsClient({
                       }}
                       className="min-w-0 flex-1 text-left"
                     >
-                      <p className="font-medium">{item.place_name}</p>
-                      <p className="text-xs text-neutral-500">
-                        {item.road_address_name || item.address_name}
-                        {item.category_name && ` · ${item.category_name.split(" > ").pop()}`}
+                      <p className="font-semibold text-ink">{item.place_name}</p>
+                      <p className="flex flex-wrap gap-x-2 text-xs text-ink-faint">
+                        <span>{item.road_address_name || item.address_name}</span>
+                        {item.category_name && <span>{item.category_name.split(" > ").pop()}</span>}
                       </p>
                     </button>
                     {isSaved ? (
-                      <span className="shrink-0 text-xs text-neutral-500">저장됨</span>
+                      <span className="shrink-0 text-xs text-ink-faint">이미 저장됨</span>
                     ) : (
                       <button
                         type="button"
@@ -237,7 +233,7 @@ export function RestaurantsClient({
                           setSelected(isSelected ? null : item);
                           if (!isSelected) showTempMarker(item);
                         }}
-                        className={`${smallButton} shrink-0`}
+                        className={`${btnSmall} shrink-0`}
                       >
                         {isSelected ? "접기" : "저장"}
                       </button>
@@ -250,8 +246,15 @@ export function RestaurantsClient({
                       <input type="hidden" name="lat" value={item.y} />
                       <input type="hidden" name="lng" value={item.x} />
                       <input type="hidden" name="kakao_place_id" value={item.id} />
-                      <input type="text" name="memo" maxLength={500} placeholder="메모 (선택) 예: 웨이팅 김, 주차 가능" className={inputClass} />
-                      <button type="submit" disabled={saving} className={`${primarySmallButton} shrink-0 py-2`}>
+                      <input
+                        type="text"
+                        name="memo"
+                        maxLength={500}
+                        placeholder="메모 (예: 웨이팅 김, 주차 가능)"
+                        aria-label="메모"
+                        className={inputClass}
+                      />
+                      <button type="submit" disabled={saving} className={`${btnPrimary} shrink-0`}>
                         {saving ? "저장 중..." : "이 맛집 저장"}
                       </button>
                     </form>
@@ -265,11 +268,16 @@ export function RestaurantsClient({
 
       {/* 저장된 목록 */}
       <section className="space-y-3">
-        <h2 className="text-lg font-medium">저장된 맛집 ({restaurants.length})</h2>
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className={sectionTitle}>저장한 맛집</h2>
+          <span className="text-sm text-ink-soft">{restaurants.length}곳</span>
+        </div>
         {restaurants.length === 0 ? (
-          <p className="text-sm text-neutral-500">아직 저장된 맛집이 없습니다. 위에서 검색해 추가해 보세요.</p>
+          <div className="rounded-card border border-dashed border-line px-4 py-10 text-center">
+            <p className="text-sm text-ink-soft">아직 저장한 곳이 없어요. 위에서 찾아 첫 맛집을 저장해 보세요.</p>
+          </div>
         ) : (
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+          <ul className={listBox}>
             {restaurants.map((r) => (
               <RestaurantRow
                 key={r.id}
@@ -307,26 +315,27 @@ function RestaurantRow({
   return (
     <li className="space-y-2 px-4 py-3 text-sm">
       <div className="flex items-start justify-between gap-3">
-        <button type="button" onClick={onFocus} className="min-w-0 flex-1 text-left">
-          <p className="font-medium">{r.name}</p>
-          {r.address && <p className="text-xs text-neutral-500">{r.address}</p>}
+        <button type="button" onClick={onFocus} className="min-w-0 flex-1 text-left" title="지도에서 보기">
+          <p className="font-semibold text-ink">{r.name}</p>
+          {r.address && <p className="text-xs text-ink-faint">{r.address}</p>}
           {r.memo && !editing && (
-            <p className="mt-1 whitespace-pre-wrap text-neutral-700 dark:text-neutral-300">{r.memo}</p>
+            <p className="mt-1 whitespace-pre-wrap text-ink-soft">{r.memo}</p>
           )}
-          <p className="mt-1 text-xs text-neutral-500">
-            {r.creatorName} 저장 · 후기 {r.postCount}
+          <p className="mt-1 flex flex-wrap gap-x-3 text-xs text-ink-faint">
+            <span>{r.creatorName} 저장</span>
+            {r.postCount > 0 && <span>후기 {r.postCount}</span>}
           </p>
         </button>
         {canEdit && (
           <div className="flex shrink-0 gap-1">
-            <button type="button" onClick={() => setEditing((v) => !v)} className={smallButton}>
+            <button type="button" onClick={() => setEditing((v) => !v)} className={btnSmall}>
               {editing ? "취소" : "메모"}
             </button>
             <ConfirmButton
               action={deleteRestaurant}
               hidden={{ id: r.id }}
-              message={`${r.name} 을(를) 삭제할까요? 연결된 후기는 남지만 맛집 정보는 사라집니다.`}
-              className={smallButton}
+              message={`${r.name} 을(를) 지울까요? 연결된 후기는 남지만 맛집 정보는 사라집니다.`}
+              className={btnSmallDanger}
             >
               삭제
             </ConfirmButton>
@@ -336,8 +345,16 @@ function RestaurantRow({
       {editing && (
         <form action={action} className="flex flex-col gap-2 sm:flex-row">
           <input type="hidden" name="id" value={r.id} />
-          <input type="text" name="memo" maxLength={500} defaultValue={r.memo ?? ""} placeholder="메모" className={inputClass} />
-          <button type="submit" disabled={pending} className={`${primarySmallButton} shrink-0 py-2`}>
+          <input
+            type="text"
+            name="memo"
+            maxLength={500}
+            defaultValue={r.memo ?? ""}
+            placeholder="메모"
+            aria-label="메모"
+            className={inputClass}
+          />
+          <button type="submit" disabled={pending} className={`${btnSmallPrimary} shrink-0 py-2`}>
             {pending ? "저장 중..." : "메모 저장"}
           </button>
         </form>

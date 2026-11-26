@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { listBox, pageTitle, sectionTitle } from "@/components/ui";
 import { displayLoginId } from "@/lib/account";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -12,8 +13,8 @@ export const metadata = { title: "회원 관리 | E슐랭" };
 export default function MembersPage() {
   return (
     <section className="space-y-8">
-      <h1 className="text-2xl font-semibold">회원 관리</h1>
-      <Suspense fallback={<p className="text-sm text-neutral-500">불러오는 중...</p>}>
+      <h1 className={pageTitle}>회원 관리</h1>
+      <Suspense fallback={<p className="text-sm text-ink-soft">불러오는 중...</p>}>
         <MemberLists />
       </Suspense>
     </section>
@@ -29,7 +30,7 @@ async function MemberLists() {
   ]);
 
   if (error) {
-    return <p className="text-sm text-red-700">회원 목록을 불러오지 못했습니다. ({error.message})</p>;
+    return <p className="text-sm text-danger">회원 목록을 불러오지 못했습니다. ({error.message})</p>;
   }
 
   const profiles = data ?? [];
@@ -38,15 +39,18 @@ async function MemberLists() {
 
   return (
     <>
-      <MemberTable
-        title={`승인 대기 (${pending.length})`}
-        emptyText="승인 대기 중인 회원이 없습니다."
+      <MemberList
+        title="승인 기다리는 중"
+        count={pending.length}
+        emptyText="기다리는 회원이 없습니다."
         profiles={pending}
         loginIds={loginIds}
         currentUserId={user.id}
+        highlight
       />
-      <MemberTable
-        title={`승인된 회원 (${approved.length})`}
+      <MemberList
+        title="승인된 회원"
+        count={approved.length}
         emptyText="승인된 회원이 없습니다."
         profiles={approved}
         loginIds={loginIds}
@@ -64,62 +68,66 @@ async function loadLoginIds(): Promise<Map<string, string>> {
   return new Map(data.users.map((u) => [u.id, displayLoginId(u.email)]));
 }
 
-function MemberTable({
+function MemberList({
   title,
+  count,
   emptyText,
   profiles,
   loginIds,
   currentUserId,
+  highlight,
 }: {
   title: string;
+  count: number;
   emptyText: string;
   profiles: Profile[];
   loginIds: Map<string, string>;
   currentUserId: string;
+  highlight?: boolean;
 }) {
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-medium">{title}</h2>
+      <h2 className={sectionTitle}>
+        {title}{" "}
+        <span
+          className={`ml-1 inline-block rounded-md px-1.5 py-0.5 text-xs font-bold ${
+            highlight && count > 0 ? "bg-accent text-on-accent" : "bg-surface-muted text-ink-soft"
+          }`}
+        >
+          {count}
+        </span>
+      </h2>
       {profiles.length === 0 ? (
-        <p className="text-sm text-neutral-500">{emptyText}</p>
+        <p className="text-sm text-ink-soft">{emptyText}</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-neutral-200 dark:border-neutral-800">
-          <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-left text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400">
-              <tr>
-                <th className="px-4 py-2 font-medium">닉네임</th>
-                <th className="px-4 py-2 font-medium">아이디</th>
-                <th className="px-4 py-2 font-medium">역할</th>
-                <th className="px-4 py-2 font-medium">가입일</th>
-                <th className="px-4 py-2 text-right font-medium">작업</th>
-              </tr>
-            </thead>
-            <tbody>
-              {profiles.map((p) => (
-                <tr key={p.id} className="border-t border-neutral-200 dark:border-neutral-800">
-                  <td className="px-4 py-2">{p.nickname}</td>
-                  <td className="px-4 py-2 text-neutral-600 dark:text-neutral-400">
-                    {loginIds.get(p.id) ?? "(알 수 없음)"}
-                  </td>
-                  <td className="px-4 py-2">{p.role === "admin" ? "관리자" : "회원"}</td>
-                  <td className="px-4 py-2 text-neutral-600 dark:text-neutral-400">
-                    {new Date(p.created_at).toLocaleDateString("ko-KR")}
-                  </td>
-                  <td className="px-4 py-2 text-right">
-                    {p.id === currentUserId ? (
-                      <span className="text-xs text-neutral-500">본인</span>
-                    ) : (
-                      <div className="flex flex-wrap items-center justify-end gap-2">
-                        <ApproveButton id={p.id} approved={p.approved} />
-                        <ResetPasswordButton id={p.id} nickname={p.nickname} />
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ul className={listBox}>
+          {profiles.map((p) => (
+            <li key={p.id} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
+              <div className="min-w-0">
+                <p className="flex items-center gap-2 font-semibold text-ink">
+                  <span className="truncate">{p.nickname}</span>
+                  {p.role === "admin" && (
+                    <span className="rounded-md bg-brand-soft px-1.5 py-0.5 text-xs font-medium text-brand">
+                      운영진
+                    </span>
+                  )}
+                </p>
+                <p className="flex flex-wrap gap-x-3 text-xs text-ink-faint">
+                  <span className="text-ink-soft">{loginIds.get(p.id) ?? "(알 수 없음)"}</span>
+                  <span>가입 {new Date(p.created_at).toLocaleDateString("ko-KR")}</span>
+                </p>
+              </div>
+              {p.id === currentUserId ? (
+                <span className="text-xs text-ink-faint">나</span>
+              ) : (
+                <div className="flex flex-wrap items-center gap-2">
+                  <ApproveButton id={p.id} approved={p.approved} />
+                  <ResetPasswordButton id={p.id} nickname={p.nickname} />
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

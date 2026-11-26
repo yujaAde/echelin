@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { PostForm } from "@/components/posts/PostForm";
+import { pageTitle } from "@/components/ui";
 import { requireApproved } from "@/lib/auth";
 import { BOARDS, type Board } from "@/lib/boards";
 import { monthOf, todayKST } from "@/lib/calendar";
@@ -9,8 +10,8 @@ import { createClient } from "@/lib/supabase/server";
 export function NewPostPage({ board }: { board: Board }) {
   return (
     <section className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-2xl font-semibold">{BOARDS[board].writeLabel}</h1>
-      <Suspense fallback={<p className="text-sm text-neutral-500">불러오는 중...</p>}>
+      <h1 className={pageTitle}>{BOARDS[board].writeLabel}</h1>
+      <Suspense fallback={<p className="text-sm text-ink-soft">불러오는 중...</p>}>
         <NewPostBody board={board} />
       </Suspense>
     </section>

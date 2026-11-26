@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { btnSmall } from "@/components/ui";
 import { loadKakaoSdk } from "@/lib/kakaoShare";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
@@ -10,14 +11,14 @@ export function ShareButton({ month, monthLabel }: { month: string; monthLabel: 
   const [busy, setBusy] = useState(false);
 
   const url = `${SITE_URL}/votes?month=${month}`;
-  const text = `[${SITE_NAME}] ${monthLabel} 모임 참석 가능일 투표입니다. 참석할 수 있는 날을 모두 골라 주세요!`;
+  const text = `[${SITE_NAME}] ${monthLabel} 모임 참석 가능일 투표입니다. 갈 수 있는 날을 모두 골라 주세요!`;
 
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(`${text}\n${url}`);
-      setMessage("링크를 복사했습니다. 단톡방에 붙여넣어 주세요.");
+      setMessage("링크를 복사했습니다. 단톡방에 붙여 넣으세요.");
     } catch {
-      setMessage(`복사에 실패했습니다. 주소: ${url}`);
+      setMessage(`복사가 안 됐습니다. 주소를 직접 옮겨 주세요: ${url}`);
     }
   }
 
@@ -47,9 +48,6 @@ export function ShareButton({ month, monthLabel }: { month: string; monthLabel: 
     }
   }
 
-  const btn =
-    "rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800";
-
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
@@ -57,15 +55,15 @@ export function ShareButton({ month, monthLabel }: { month: string; monthLabel: 
           type="button"
           onClick={shareKakao}
           disabled={busy}
-          className="rounded-md bg-[#FEE500] px-3 py-1.5 text-sm font-medium text-[#191919] hover:bg-[#f5dc00] disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-md bg-[#FEE500] px-3 py-1.5 text-xs font-semibold text-[#191919] hover:bg-[#f5dc00] disabled:opacity-50"
         >
           {busy ? "준비 중..." : "카카오톡으로 공유"}
         </button>
-        <button type="button" onClick={copyLink} className={btn}>
+        <button type="button" onClick={copyLink} className={btnSmall}>
           링크 복사
         </button>
       </div>
-      {message && <p className="text-xs text-neutral-600 dark:text-neutral-400">{message}</p>}
+      {message && <p className="text-xs text-ink-soft">{message}</p>}
     </div>
   );
 }
