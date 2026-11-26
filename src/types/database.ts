@@ -26,6 +26,12 @@ export type Vote = {
   created_at: string;
 };
 
+export type VoteAbsence = {
+  user_id: string;
+  month: string; // YYYY-MM
+  created_at: string;
+};
+
 export type Restaurant = {
   id: string;
   name: string;
@@ -97,6 +103,16 @@ export type Database = {
           user_id: string;
           month: string;
           date: string;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      vote_absences: {
+        Row: VoteAbsence;
+        Insert: {
+          user_id: string;
+          month: string;
           created_at?: string;
         };
         Update: never;
