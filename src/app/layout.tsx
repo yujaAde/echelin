@@ -42,6 +42,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className="h-full antialiased">
+      <head>
+        {/* 안드로이드 설치 이벤트는 앱이 뜨기 전에 올 수 있어 가장 먼저 붙잡아 둔다. InstallGuide 가 읽는다. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__installPrompt=e;window.dispatchEvent(new Event('installprompt-ready'));});window.addEventListener('appinstalled',function(){window.__installPrompt=null;});`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
