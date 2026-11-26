@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { ConfirmButton } from "@/components/ConfirmButton";
 import { btnSmallDanger, listBox, pageTitle, sectionTitle } from "@/components/ui";
 import { requireAdmin } from "@/lib/auth";
 import { formatDateKo, todayKST } from "@/lib/calendar";
@@ -73,12 +74,14 @@ function HolidayTable({
                 </span>
                 <span className="text-ink-soft">{h.name}</span>
               </div>
-              <form action={deleteHoliday}>
-                <input type="hidden" name="date" value={h.date} />
-                <button type="submit" className={btnSmallDanger}>
-                  삭제
-                </button>
-              </form>
+              <ConfirmButton
+                action={deleteHoliday}
+                hidden={{ date: h.date }}
+                message={`${h.name}(${h.date})을 공휴일에서 뺄까요?`}
+                className={btnSmallDanger}
+              >
+                삭제
+              </ConfirmButton>
             </li>
           ))}
         </ul>

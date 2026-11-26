@@ -39,19 +39,20 @@ export async function addHoliday(
   return { success: `${date} ${name.trim()} 을(를) 저장했습니다.` };
 }
 
-export async function deleteHoliday(formData: FormData): Promise<void> {
+export async function deleteHoliday(formData: FormData): Promise<{ error?: string }> {
   await requireAdmin();
 
   const date = formData.get("date");
   if (!isDateString(date)) {
-    throw new Error("잘못된 요청입니다.");
+    return { error: "잘못된 요청입니다." };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.from("holidays").delete().eq("date", date);
   if (error) {
-    throw new Error(`삭제에 실패했습니다. (${error.message})`);
+    return { error: `지우지 못했습니다. (${error.message})` };
   }
 
   revalidate();
+  return {};
 }

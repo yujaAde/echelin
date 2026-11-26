@@ -191,16 +191,17 @@ export async function addComment(
   return {};
 }
 
-export async function deleteComment(formData: FormData): Promise<void> {
+export async function deleteComment(formData: FormData): Promise<{ error?: string }> {
   await requireApproved();
 
   const id = text(formData, "id");
   const postId = text(formData, "post_id");
-  if (!UUID_RE.test(id) || !UUID_RE.test(postId)) throw new Error("잘못된 요청입니다.");
+  if (!UUID_RE.test(id) || !UUID_RE.test(postId)) return { error: "잘못된 요청입니다." };
 
   const supabase = await createClient();
   const { error } = await supabase.from("comments").delete().eq("id", id);
-  if (error) throw new Error(`댓글 삭제에 실패했습니다. (${error.message})`);
+  if (error) return { error: `댓글을 지우지 못했습니다. (${error.message})` };
 
   refresh();
+  return {};
 }

@@ -86,15 +86,16 @@ export async function updateRestaurantMemo(
   return { success: "메모를 저장했습니다." };
 }
 
-export async function deleteRestaurant(formData: FormData): Promise<void> {
+export async function deleteRestaurant(formData: FormData): Promise<{ error?: string }> {
   await requireApproved();
 
   const id = text(formData, "id");
-  if (!UUID_RE.test(id)) throw new Error("잘못된 요청입니다.");
+  if (!UUID_RE.test(id)) return { error: "잘못된 요청입니다." };
 
   const supabase = await createClient();
   const { error } = await supabase.from("restaurants").delete().eq("id", id);
-  if (error) throw new Error(`삭제에 실패했습니다. (${error.message})`);
+  if (error) return { error: `지우지 못했습니다. (${error.message})` };
 
   revalidate();
+  return {};
 }
