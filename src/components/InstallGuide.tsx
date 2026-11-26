@@ -6,7 +6,10 @@ import { useSyncExternalStore } from "react";
 // 안드로이드 설치 이벤트(beforeinstallprompt)는 페이지가 뜨기 전에 올 수 있어
 // 루트 레이아웃의 인라인 스크립트가 window.__installPrompt 에 먼저 붙잡아 둔다.
 
-const DISMISS_KEY = "echelin.installGuideDismissed";
+// "다시 보지 않기"는 영구 저장. 설치 완료 표시는 이번 브라우저 세션에만 유지해
+// 앱을 지운 뒤 다시 접속하면 안내가 다시 보이게 한다. (v2: 설치 완료를 영구 저장하던 이전 값은 무시)
+const DISMISS_KEY = "echelin.installGuideDismissed.v2";
+const INSTALLED_KEY = "echelin.installGuideInstalled";
 
 type Platform = "server" | "standalone" | "ios" | "android" | "other";
 
@@ -54,6 +57,22 @@ function writeDismissed() {
   notify();
 }
 
+function readInstalled(): boolean {
+  try {
+    return window.sessionStorage.getItem(INSTALLED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+function writeInstalled() {
+  try {
+    window.sessionStorage.setItem(INSTALLED_KEY, "1");
+  } catch {
+    // 저장 불가 환경이면 설치 직후에도 안내가 남을 수 있다. 큰 문제는 아니다.
+  }
+  notify();
+}
+
 function readInstallPrompt(): BeforeInstallPromptEvent | null {
   return window.__installPrompt ?? null;
 }
@@ -84,9 +103,16 @@ const primaryButton =
 export function InstallGuide() {
   const platform = useSyncExternalStore(subscribe, detectPlatform, () => "server" as Platform);
   const dismissed = useSyncExternalStore(subscribe, readDismissed, () => true);
+  const installed = useSyncExternalStore(subscribe, readInstalled, () => false);
   const installPrompt = useSyncExternalStore(subscribe, readInstallPrompt, () => null);
 
-  if (dismissed || platform === "server" || platform === "standalone" || platform === "other") {
+  if (
+    dismissed ||
+    installed ||
+    platform === "server" ||
+    platform === "standalone" ||
+    platform === "other"
+  ) {
     return null;
   }
 
@@ -95,7 +121,7 @@ export function InstallGuide() {
     await installPrompt.prompt();
     const { outcome } = await installPrompt.userChoice;
     window.__installPrompt = null;
-    if (outcome === "accepted") writeDismissed();
+    if (outcome === "accepted") writeInstalled();
     else notify();
   }
 
