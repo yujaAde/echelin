@@ -15,7 +15,7 @@ export type RestaurantView = {
   lng: number | null;
   kakaoPlaceId: string | null;
   memo: string | null;
-  createdBy: string;
+  createdBy: string | null; // 탈퇴한 회원이면 null
   creatorName: string;
   postCount: number;
 };

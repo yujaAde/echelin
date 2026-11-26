@@ -1,10 +1,12 @@
 import { Suspense } from "react";
-import { listBox, pageTitle, sectionTitle } from "@/components/ui";
+import { ConfirmButton } from "@/components/ConfirmButton";
+import { btnSmallDanger, listBox, pageTitle, sectionTitle } from "@/components/ui";
 import { displayLoginId } from "@/lib/account";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/database";
+import { deleteMember } from "./actions";
 import { ApproveButton } from "./ApproveButton";
 import { ResetPasswordButton } from "./ResetPasswordButton";
 
@@ -123,6 +125,17 @@ function MemberList({
                 <div className="flex flex-wrap items-center gap-2">
                   <ApproveButton id={p.id} approved={p.approved} />
                   <ResetPasswordButton id={p.id} nickname={p.nickname} />
+                  {p.role !== "admin" && (
+                    <ConfirmButton
+                      action={deleteMember}
+                      hidden={{ id: p.id }}
+                      message={`${p.nickname} 님을 회원에서 지울까요?\n로그인할 수 없게 되고 투표 기록은 사라집니다. 쓴 글, 댓글, 저장한 맛집은 "(탈퇴한 회원)"으로 남습니다.`}
+                      pendingLabel="지우는 중..."
+                      className={btnSmallDanger}
+                    >
+                      회원 삭제
+                    </ConfirmButton>
+                  )}
                 </div>
               )}
             </li>

@@ -51,7 +51,7 @@ async function RestaurantsBody() {
     kakaoPlaceId: r.kakao_place_id,
     memo: r.memo,
     createdBy: r.created_by,
-    creatorName: names.get(r.created_by) ?? "(알 수 없음)",
+    creatorName: r.created_by ? (names.get(r.created_by) ?? "(알 수 없음)") : "(탈퇴한 회원)",
     postCount: postCount.get(r.id) ?? 0,
   }));
 

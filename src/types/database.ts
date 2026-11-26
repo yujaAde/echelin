@@ -40,13 +40,13 @@ export type Restaurant = {
   lng: number | null;
   kakao_place_id: string | null;
   memo: string | null;
-  created_by: string;
+  created_by: string | null; // 탈퇴한 회원이면 null
   created_at: string;
 };
 
 export type Post = {
   id: string;
-  author_id: string;
+  author_id: string | null; // 탈퇴한 회원이면 null
   title: string;
   body: string;
   restaurant_id: string | null;
@@ -66,7 +66,7 @@ export type PostImage = {
 export type Comment = {
   id: string;
   post_id: string;
-  author_id: string;
+  author_id: string | null; // 탈퇴한 회원이면 null
   body: string;
   created_at: string;
 };

@@ -27,18 +27,19 @@ export async function signedUrlMap(
   return result;
 }
 
-// 닉네임 조회용. 탈퇴/미승인 회원은 "(알 수 없음)".
+// 닉네임 조회용. null(탈퇴한 회원)은 건너뛴다.
 export async function nicknameMap(
   supabase: Client,
-  userIds: string[],
+  userIds: (string | null)[],
 ): Promise<Map<string, string>> {
-  const ids = [...new Set(userIds)];
+  const ids = [...new Set(userIds.filter((id): id is string => id !== null))];
   if (ids.length === 0) return new Map();
   const { data } = await supabase.from("profiles").select("id, nickname").in("id", ids);
   return new Map((data ?? []).map((p) => [p.id, p.nickname]));
 }
 
-export function displayName(map: Map<string, string>, id: string): string {
+export function displayName(map: Map<string, string>, id: string | null): string {
+  if (id === null) return "(탈퇴한 회원)";
   return map.get(id) ?? "(알 수 없음)";
 }
 
