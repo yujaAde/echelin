@@ -41,8 +41,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className="h-full antialiased">
+    <html lang="ko" className="h-full antialiased" suppressHydrationWarning>
       <head>
+        {/* 저장된 화면 모드를 그리기 전에 적용한다 (ThemeToggle 과 같은 키) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('echelin.theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;var c=t==='dark'?'#15181e':'#fbf5e6';document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.setAttribute('content',c)});}}catch(_){}`,
+          }}
+        />
         {/* 제목용 서체. 본문은 시스템 고딕을 쓴다 (globals.css) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

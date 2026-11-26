@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LogoutButton } from "@/components/LogoutButton";
 import { SiteNav } from "@/components/SiteNav";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { requireApproved } from "@/lib/auth";
 
 export async function SiteHeader() {
@@ -21,14 +22,15 @@ export async function SiteHeader() {
             />
             <span className="font-display text-2xl leading-none text-ink">E슐랭</span>
           </Link>
-          <div className="flex items-center gap-3 text-sm">
+          <div className="flex items-center gap-2 text-sm">
             <Link
               href="/account/password"
-              className="max-w-32 truncate text-ink-soft hover:text-ink"
+              className="max-w-28 truncate text-ink-soft hover:text-ink"
               title="비밀번호 변경"
             >
               {profile.nickname}
             </Link>
+            <ThemeToggle />
             <LogoutButton />
           </div>
         </div>

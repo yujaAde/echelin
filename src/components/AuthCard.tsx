@@ -1,11 +1,15 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { btnPrimary, inputClass as input } from "@/components/ui";
 
 // 로그인·가입·승인 대기·비밀번호 변경이 함께 쓰는 틀. 마스코트와 이름이 머리말이 된다.
 export function AuthCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-4 py-10">
+    <main className="relative flex flex-1 flex-col items-center justify-center px-4 py-10">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <Link href="/" className="mb-6 flex flex-col items-center gap-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
