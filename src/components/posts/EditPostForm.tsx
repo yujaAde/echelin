@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { updatePost, type PostFormState } from "@/app/(app)/posts/actions";
 import { FormMessage } from "@/components/FormMessage";
+import { MeetingFields } from "@/components/posts/MeetingFields";
 import { btnPrimary, btnSecondary, inputClass, labelClass } from "@/components/ui";
 import { postPath } from "@/lib/boards";
 import type { Post } from "@/types/database";
@@ -28,23 +29,12 @@ export function EditPostForm({
       </div>
 
       {post.board === "review" && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <label htmlFor="meeting_month" className={labelClass}>모임 월</label>
-            <input id="meeting_month" name="meeting_month" type="month" required defaultValue={post.meeting_month ?? ""} className={inputClass} />
-          </div>
-          {restaurants.length > 0 && (
-            <div className="space-y-1.5">
-              <label htmlFor="restaurant_id" className={labelClass}>다녀온 맛집</label>
-              <select id="restaurant_id" name="restaurant_id" defaultValue={post.restaurant_id ?? ""} className={inputClass}>
-                <option value="">고르지 않음</option>
-                {restaurants.map((r) => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
+        <MeetingFields
+          defaultMonth={post.meeting_month ?? ""}
+          defaultIsMeeting={post.meeting_month !== null}
+          restaurants={restaurants}
+          defaultRestaurantId={post.restaurant_id}
+        />
       )}
 
       <div className="space-y-1.5">

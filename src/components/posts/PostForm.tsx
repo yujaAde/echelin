@@ -3,6 +3,7 @@
 import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { createPost, type PostFormState } from "@/app/(app)/posts/actions";
 import { FormMessage } from "@/components/FormMessage";
+import { MeetingFields } from "@/components/posts/MeetingFields";
 import { btnPrimary, btnSecondary, inputClass, labelClass } from "@/components/ui";
 import { BOARDS, type Board } from "@/lib/boards";
 import { isSupportedImage, MAX_IMAGES_PER_POST, resizeImage } from "@/lib/image";
@@ -115,23 +116,7 @@ export function PostForm({
       </div>
 
       {board === "review" && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <label htmlFor="meeting_month" className={labelClass}>모임 월</label>
-            <input id="meeting_month" name="meeting_month" type="month" defaultValue={defaultMonth} required className={inputClass} />
-          </div>
-          {restaurants.length > 0 && (
-            <div className="space-y-1.5">
-              <label htmlFor="restaurant_id" className={labelClass}>다녀온 맛집</label>
-              <select id="restaurant_id" name="restaurant_id" defaultValue="" className={inputClass}>
-                <option value="">고르지 않음</option>
-                {restaurants.map((r) => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
+        <MeetingFields defaultMonth={defaultMonth} defaultIsMeeting restaurants={restaurants} />
       )}
 
       <div className="space-y-1.5">

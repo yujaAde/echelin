@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const MEMBER_LINKS = [
   { href: "/votes", label: "참석일 투표" },
-  { href: "/posts", label: "모임 후기" },
+  { href: "/posts", label: "맛집 후기" },
   { href: "/board", label: "자유게시판" },
   { href: "/restaurants", label: "맛집 지도" },
 ];

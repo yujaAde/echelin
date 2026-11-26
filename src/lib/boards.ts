@@ -1,4 +1,5 @@
 // 게시판 종류. 후기('review')와 자유글('free')은 posts 테이블을 공유하고 board 열로 구분한다.
+// 후기는 모임에서 다녀온 글(meeting_month 있음)과 개인 맛집 후기(meeting_month 없음)를 모두 담는다.
 
 export type Board = "review" | "free";
 
@@ -15,7 +16,7 @@ export type BoardConfig = {
 export const BOARDS: Record<Board, BoardConfig> = {
   review: {
     path: "/posts",
-    title: "모임 후기",
+    title: "맛집 후기",
     writeLabel: "후기 쓰기",
     editTitle: "후기 수정",
     submitLabel: "후기 올리기",
@@ -40,4 +41,11 @@ export function isBoard(value: unknown): value is Board {
 export function postPath(board: Board, id?: string): string {
   const base = BOARDS[board].path;
   return id ? `${base}/${id}` : base;
+}
+
+// 후기 목록 보기 방식: 전체 또는 모임 후기만
+export type ReviewView = "all" | "meeting";
+
+export function isReviewView(value: unknown): value is ReviewView {
+  return value === "all" || value === "meeting";
 }

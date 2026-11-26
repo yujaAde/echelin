@@ -20,7 +20,8 @@ function text(formData: FormData, name: string): string {
   return typeof v === "string" ? v.trim() : "";
 }
 
-// 후기('review')는 모임 월이 필수이고 맛집을 고를 수 있다. 자유글('free')은 둘 다 없다.
+// 후기('review')는 맛집을 고를 수 있고, "모임 후기"로 표시하면 모임 월이 필요하다.
+// 자유글('free')은 둘 다 없다.
 function validatePostFields(board: Board, formData: FormData) {
   const title = text(formData, "title");
   const body = typeof formData.get("body") === "string" ? (formData.get("body") as string) : "";
@@ -36,15 +37,17 @@ function validatePostFields(board: Board, formData: FormData) {
     return { title, body: body.trim(), meetingMonth: null, restaurantId: null } as const;
   }
 
-  const meetingMonth = text(formData, "meeting_month");
+  const isMeeting = formData.get("is_meeting") === "1";
+  const meetingMonthRaw = text(formData, "meeting_month");
   const restaurantRaw = text(formData, "restaurant_id");
   const restaurantId = restaurantRaw === "" ? null : restaurantRaw;
-  if (!isMonthString(meetingMonth)) {
-    return { error: "모임 월을 선택해 주세요." } as const;
+  if (isMeeting && !isMonthString(meetingMonthRaw)) {
+    return { error: "모임 월을 골라 주세요. 모임과 상관없는 후기면 '모임 후기' 표시를 끄세요." } as const;
   }
   if (restaurantId !== null && !UUID_RE.test(restaurantId)) {
     return { error: "맛집 선택이 올바르지 않습니다." } as const;
   }
+  const meetingMonth = isMeeting ? meetingMonthRaw : null;
   return { title, body: body.trim(), meetingMonth, restaurantId } as const;
 }
 

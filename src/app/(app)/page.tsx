@@ -16,7 +16,7 @@ export default function HomePage() {
 }
 
 const SECTIONS = [
-  { href: "/posts", title: "모임 후기", body: "다녀온 모임의 사진과 이야기" },
+  { href: "/posts", title: "맛집 후기", body: "모임에서, 또는 혼자 다녀온 맛집 이야기" },
   { href: "/board", title: "자유게시판", body: "맛집 추천, 잡담, 뭐든지" },
   { href: "/restaurants", title: "맛집 지도", body: "가 보고 싶은 곳을 모아 둔 지도" },
 ];
