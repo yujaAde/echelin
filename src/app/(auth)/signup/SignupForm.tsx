@@ -22,6 +22,7 @@ export function SignupForm() {
           maxLength={20}
           autoComplete="nickname"
           required
+          defaultValue={state.values?.nickname ?? ""}
           className={inputClass}
         />
         <p className="text-xs text-neutral-500">2~20자. 다른 회원에게 보이는 이름입니다.</p>
@@ -39,6 +40,7 @@ export function SignupForm() {
           autoCapitalize="none"
           spellCheck={false}
           required
+          defaultValue={state.values?.login_id ?? ""}
           className={inputClass}
         />
         <p className="text-xs text-neutral-500">영문, 숫자, 밑줄(_) 4~20자. 로그인할 때 사용합니다.</p>

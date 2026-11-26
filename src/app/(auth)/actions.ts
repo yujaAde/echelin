@@ -9,6 +9,8 @@ import { createClient } from "@/lib/supabase/server";
 export type AuthFormState = {
   error?: string;
   success?: string;
+  // 실패 시 입력값을 돌려줘 폼이 초기화되지 않게 한다 (비밀번호는 제외)
+  values?: { login_id?: string; nickname?: string };
 };
 
 function field(formData: FormData, name: string): string {
@@ -22,8 +24,9 @@ export async function login(
 ): Promise<AuthFormState> {
   const loginId = field(formData, "login_id");
   const password = field(formData, "password");
+  const values = { login_id: loginId };
   if (!loginId || !password) {
-    return { error: "아이디와 비밀번호를 입력해 주세요." };
+    return { error: "아이디와 비밀번호를 입력해 주세요.", values };
   }
 
   const supabase = await createClient();
@@ -34,9 +37,9 @@ export async function login(
 
   if (error) {
     if (error.code === "email_not_confirmed") {
-      return { error: "계정이 아직 활성화되지 않았습니다. 운영진에게 문의해 주세요." };
+      return { error: "계정이 아직 활성화되지 않았습니다. 운영진에게 문의해 주세요.", values };
     }
-    return { error: "아이디 또는 비밀번호가 올바르지 않습니다." };
+    return { error: "아이디 또는 비밀번호가 올바르지 않습니다.", values };
   }
 
   redirect("/");
@@ -50,21 +53,22 @@ export async function signup(
   const password = field(formData, "password");
   const passwordConfirm = field(formData, "password_confirm");
   const nickname = field(formData, "nickname");
+  const values = { login_id: loginId, nickname };
 
   if (!loginId || !password || !nickname) {
-    return { error: "모든 항목을 입력해 주세요." };
+    return { error: "모든 항목을 입력해 주세요.", values };
   }
   if (!isValidLoginId(loginId)) {
-    return { error: "아이디는 영문 소문자, 숫자, 밑줄(_)로 4~20자여야 합니다." };
+    return { error: "아이디는 영문 소문자, 숫자, 밑줄(_)로 4~20자여야 합니다.", values };
   }
   if (nickname.length < 2 || nickname.length > 20) {
-    return { error: "닉네임은 2자 이상 20자 이하로 입력해 주세요." };
+    return { error: "닉네임은 2자 이상 20자 이하로 입력해 주세요.", values };
   }
   if (password.length < 6) {
-    return { error: "비밀번호는 6자 이상이어야 합니다." };
+    return { error: "비밀번호는 6자 이상이어야 합니다.", values };
   }
   if (password !== passwordConfirm) {
-    return { error: "비밀번호 확인이 일치하지 않습니다." };
+    return { error: "비밀번호 확인이 일치하지 않습니다.", values };
   }
 
   const email = toAuthEmail(loginId);
@@ -81,18 +85,21 @@ export async function signup(
 
   if (createError) {
     if (createError.code === "weak_password") {
-      return { error: "비밀번호가 너무 약합니다. 더 긴 비밀번호를 사용해 주세요." };
+      return { error: "비밀번호가 너무 약합니다. 더 긴 비밀번호를 사용해 주세요.", values };
     }
     if (createError.code === "email_exists" || createError.status === 422) {
-      return { error: "이미 사용 중인 아이디입니다." };
+      return { error: "이미 사용 중인 아이디입니다.", values };
     }
-    return { error: `가입에 실패했습니다. (${createError.message})` };
+    return { error: `가입에 실패했습니다. (${createError.message})`, values };
   }
 
   const supabase = await createClient();
   const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
   if (loginError) {
-    return { error: "가입은 되었지만 자동 로그인에 실패했습니다. 로그인 화면에서 다시 시도해 주세요." };
+    return {
+      error: "가입은 되었지만 자동 로그인에 실패했습니다. 로그인 화면에서 다시 시도해 주세요.",
+      values,
+    };
   }
 
   redirect("/pending");

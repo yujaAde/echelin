@@ -24,6 +24,7 @@ export function LoginForm({ initialError }: { initialError?: string }) {
           autoCapitalize="none"
           spellCheck={false}
           required
+          defaultValue={state.values?.login_id ?? ""}
           className={inputClass}
         />
       </div>
