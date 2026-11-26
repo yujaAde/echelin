@@ -1,33 +1,9 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
-export function AuthCard({
-  title,
-  children,
-  backgroundImage,
-}: {
-  title: string;
-  children: ReactNode;
-  /** public/ 기준 경로. 지정하면 화면 전체 배경으로 깔고 카드를 반투명하게 띄운다. */
-  backgroundImage?: string;
-}) {
-  const style: CSSProperties | undefined = backgroundImage
-    ? { backgroundImage: `url(${backgroundImage})` }
-    : undefined;
-
+export function AuthCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <main
-      className={`flex flex-1 items-center justify-center bg-cover bg-center p-6 ${
-        backgroundImage ? "bg-no-repeat" : ""
-      }`}
-      style={style}
-    >
-      <div
-        className={`w-full max-w-sm rounded-xl border border-neutral-200 p-8 shadow-sm dark:border-neutral-800 ${
-          backgroundImage
-            ? "bg-white/90 shadow-lg backdrop-blur-sm dark:bg-neutral-950/90"
-            : "bg-white dark:bg-neutral-950"
-        }`}
-      >
+    <main className="flex flex-1 items-center justify-center p-6">
+      <div className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
         <p className="mb-1 text-center text-sm text-neutral-500">E슐랭</p>
         <h1 className="mb-6 text-center text-xl font-semibold">{title}</h1>
         {children}
