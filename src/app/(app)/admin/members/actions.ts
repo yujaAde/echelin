@@ -8,13 +8,22 @@ import { createClient } from "@/lib/supabase/server";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export async function setApproved(formData: FormData): Promise<void> {
+export type ApproveState = { error?: string };
+
+export async function setApproved(
+  _prev: ApproveState,
+  formData: FormData,
+): Promise<ApproveState> {
   await requireAdmin();
 
   const targetId = formData.get("id");
   const value = formData.get("value");
-  if (typeof targetId !== "string" || (value !== "true" && value !== "false")) {
-    throw new Error("잘못된 요청입니다.");
+  if (
+    typeof targetId !== "string" ||
+    !UUID_RE.test(targetId) ||
+    (value !== "true" && value !== "false")
+  ) {
+    return { error: "잘못된 요청입니다." };
   }
 
   const supabase = await createClient();
@@ -23,11 +32,12 @@ export async function setApproved(formData: FormData): Promise<void> {
     value: value === "true",
   });
   if (error) {
-    throw new Error(`승인 상태 변경에 실패했습니다. (${error.message})`);
+    return { error: `승인 상태 변경에 실패했습니다. (${error.message})` };
   }
 
   // DB 는 캐시 밖 데이터이므로 현재 경로의 RSC 를 다시 받아 화면을 갱신한다
   refresh();
+  return {};
 }
 
 export type ResetPasswordState = { error?: string; tempPassword?: string };

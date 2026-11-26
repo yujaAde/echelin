@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/database";
-import { setApproved } from "./actions";
+import { ApproveButton } from "./ApproveButton";
 import { ResetPasswordButton } from "./ResetPasswordButton";
 
 export const metadata = { title: "회원 관리 | E슐랭" };
@@ -122,24 +122,5 @@ function MemberTable({
         </div>
       )}
     </div>
-  );
-}
-
-function ApproveButton({ id, approved }: { id: string; approved: boolean }) {
-  return (
-    <form action={setApproved} className="inline">
-      <input type="hidden" name="id" value={id} />
-      <input type="hidden" name="value" value={approved ? "false" : "true"} />
-      <button
-        type="submit"
-        className={
-          approved
-            ? "rounded-md border border-neutral-300 px-3 py-1 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
-            : "rounded-md bg-neutral-900 px-3 py-1 text-xs font-medium text-white hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900"
-        }
-      >
-        {approved ? "승인 취소" : "승인"}
-      </button>
-    </form>
   );
 }
