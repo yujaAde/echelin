@@ -32,6 +32,32 @@ export type VoteAbsence = {
   created_at: string;
 };
 
+// 월별 모임 진행 설정. null 인 값은 앱 기본값을 쓴다.
+export type VoteRound = {
+  month: string; // YYYY-MM
+  date_deadline: string | null;
+  date_closed_at: string | null;
+  place_vote_opens_at: string | null;
+  nomination_days: number;
+  updated_at: string;
+};
+
+export type PlaceNomination = {
+  id: string;
+  month: string;
+  restaurant_id: string;
+  nominated_by: string | null;
+  created_at: string;
+};
+
+export type PlaceVote = {
+  id: string;
+  user_id: string;
+  month: string;
+  restaurant_id: string;
+  created_at: string;
+};
+
 export type Restaurant = {
   id: string;
   name: string;
@@ -118,6 +144,49 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      vote_rounds: {
+        Row: VoteRound;
+        Insert: {
+          month: string;
+          date_deadline?: string | null;
+          date_closed_at?: string | null;
+          place_vote_opens_at?: string | null;
+          nomination_days?: number;
+          updated_at?: string;
+        };
+        Update: {
+          date_deadline?: string | null;
+          date_closed_at?: string | null;
+          place_vote_opens_at?: string | null;
+          nomination_days?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      place_nominations: {
+        Row: PlaceNomination;
+        Insert: {
+          id?: string;
+          month: string;
+          restaurant_id: string;
+          nominated_by: string;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      place_votes: {
+        Row: PlaceVote;
+        Insert: {
+          id?: string;
+          user_id: string;
+          month: string;
+          restaurant_id: string;
+          created_at?: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
       restaurants: {
         Row: Restaurant;
         Insert: {
@@ -193,6 +262,10 @@ export type Database = {
       set_profile_approved: {
         Args: { target_id: string; value: boolean };
         Returns: undefined;
+      };
+      close_date_vote_if_complete: {
+        Args: { target_month: string };
+        Returns: boolean;
       };
     };
     Enums: Record<string, never>;

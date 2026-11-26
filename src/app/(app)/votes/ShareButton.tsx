@@ -4,14 +4,30 @@ import { useState } from "react";
 import { btnSmall } from "@/components/ui";
 import { loadKakaoSdk } from "@/lib/kakaoShare";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
+import type { Phase } from "@/lib/votes";
+
+const MESSAGE: Record<Phase, { text: string; button: string }> = {
+  date: { text: "모임 참석 가능일 투표입니다. 갈 수 있는 날을 모두 골라 주세요!", button: "투표하러 가기" },
+  nominate: { text: "모임 날짜가 정해졌어요. 가고 싶은 맛집을 추천해 주세요!", button: "맛집 추천하러 가기" },
+  place: { text: "모임 맛집 투표입니다. 가고 싶은 곳을 3곳까지 골라 주세요!", button: "맛집 고르러 가기" },
+  ended: { text: "모임 투표 결과입니다.", button: "결과 보기" },
+};
 
 // 투표 링크를 카카오톡 단톡방에 올리는 버튼. SDK 실패 시 OS 공유 → 링크 복사로 단계적으로 대체한다.
-export function ShareButton({ month, monthLabel }: { month: string; monthLabel: string }) {
+export function ShareButton({
+  month,
+  monthLabel,
+  phase,
+}: {
+  month: string;
+  monthLabel: string;
+  phase: Phase;
+}) {
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const url = `${SITE_URL}/votes?month=${month}`;
-  const text = `[${SITE_NAME}] ${monthLabel} 모임 참석 가능일 투표입니다. 갈 수 있는 날을 모두 골라 주세요!`;
+  const text = `[${SITE_NAME}] ${monthLabel} ${MESSAGE[phase].text}`;
 
   async function copyLink() {
     try {
@@ -31,7 +47,7 @@ export function ShareButton({ month, monthLabel }: { month: string; monthLabel: 
         objectType: "text",
         text,
         link: { mobileWebUrl: url, webUrl: url },
-        buttonTitle: "투표하러 가기",
+        buttonTitle: MESSAGE[phase].button,
       });
     } catch {
       if (typeof navigator.share === "function") {
