@@ -6,15 +6,18 @@ import { FormMessage } from "@/components/FormMessage";
 import { isSupportedImage, MAX_IMAGES_PER_POST, resizeImage } from "@/lib/image";
 import { POST_IMAGES_BUCKET } from "@/lib/posts";
 import { createClient } from "@/lib/supabase/client";
-import { createPost, type PostFormState } from "../actions";
+import { createPost, type PostFormState } from "@/app/(app)/posts/actions";
+import { BOARDS, type Board } from "@/lib/boards";
 
 type Picked = { id: string; file: File; preview: string };
 
 export function PostForm({
+  board,
   userId,
   defaultMonth,
   restaurants,
 }: {
+  board: Board;
   userId: string;
   defaultMonth: string;
   restaurants: { id: string; name: string }[];
@@ -102,6 +105,7 @@ export function PostForm({
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+      <input type="hidden" name="board" value={board} />
       <FormMessage error={uploadError ?? state.error} />
 
       <div className="space-y-1">
@@ -109,23 +113,25 @@ export function PostForm({
         <input id="title" name="title" type="text" maxLength={100} required className={inputClass} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1">
-          <label htmlFor="meeting_month" className="text-sm font-medium">모임 월</label>
-          <input id="meeting_month" name="meeting_month" type="month" defaultValue={defaultMonth} required className={inputClass} />
-        </div>
-        {restaurants.length > 0 && (
+      {board === "review" && (
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1">
-            <label htmlFor="restaurant_id" className="text-sm font-medium">방문한 맛집 (선택)</label>
-            <select id="restaurant_id" name="restaurant_id" defaultValue="" className={inputClass}>
-              <option value="">선택 안 함</option>
-              {restaurants.map((r) => (
-                <option key={r.id} value={r.id}>{r.name}</option>
-              ))}
-            </select>
+            <label htmlFor="meeting_month" className="text-sm font-medium">모임 월</label>
+            <input id="meeting_month" name="meeting_month" type="month" defaultValue={defaultMonth} required className={inputClass} />
           </div>
-        )}
-      </div>
+          {restaurants.length > 0 && (
+            <div className="space-y-1">
+              <label htmlFor="restaurant_id" className="text-sm font-medium">방문한 맛집 (선택)</label>
+              <select id="restaurant_id" name="restaurant_id" defaultValue="" className={inputClass}>
+                <option value="">선택 안 함</option>
+                {restaurants.map((r) => (
+                  <option key={r.id} value={r.id}>{r.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="space-y-1">
         <label htmlFor="body" className="text-sm font-medium">내용</label>
@@ -171,7 +177,7 @@ export function PostForm({
       </div>
 
       <button type="submit" disabled={busy} className={buttonClass}>
-        {progress ?? (busy ? "저장 중..." : "후기 올리기")}
+        {progress ?? (busy ? "저장 중..." : BOARDS[board].submitLabel)}
       </button>
     </form>
   );

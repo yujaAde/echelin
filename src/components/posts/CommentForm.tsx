@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef } from "react";
 import { inputClass } from "@/components/AuthCard";
 import { FormMessage } from "@/components/FormMessage";
-import { addComment, type CommentFormState } from "../actions";
+import { addComment, type CommentFormState } from "@/app/(app)/posts/actions";
 
 export function CommentForm({ postId }: { postId: string }) {
   const [state, formAction, pending] = useActionState<CommentFormState, FormData>(addComment, {});

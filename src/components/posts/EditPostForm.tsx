@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { buttonClass, inputClass } from "@/components/AuthCard";
 import { FormMessage } from "@/components/FormMessage";
+import { updatePost, type PostFormState } from "@/app/(app)/posts/actions";
+import { postPath } from "@/lib/boards";
 import type { Post } from "@/types/database";
-import { updatePost, type PostFormState } from "../../actions";
 
 export function EditPostForm({
   post,
@@ -26,23 +27,25 @@ export function EditPostForm({
         <input id="title" name="title" type="text" maxLength={100} required defaultValue={post.title} className={inputClass} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1">
-          <label htmlFor="meeting_month" className="text-sm font-medium">모임 월</label>
-          <input id="meeting_month" name="meeting_month" type="month" required defaultValue={post.meeting_month} className={inputClass} />
-        </div>
-        {restaurants.length > 0 && (
+      {post.board === "review" && (
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1">
-            <label htmlFor="restaurant_id" className="text-sm font-medium">방문한 맛집 (선택)</label>
-            <select id="restaurant_id" name="restaurant_id" defaultValue={post.restaurant_id ?? ""} className={inputClass}>
-              <option value="">선택 안 함</option>
-              {restaurants.map((r) => (
-                <option key={r.id} value={r.id}>{r.name}</option>
-              ))}
-            </select>
+            <label htmlFor="meeting_month" className="text-sm font-medium">모임 월</label>
+            <input id="meeting_month" name="meeting_month" type="month" required defaultValue={post.meeting_month ?? ""} className={inputClass} />
           </div>
-        )}
-      </div>
+          {restaurants.length > 0 && (
+            <div className="space-y-1">
+              <label htmlFor="restaurant_id" className="text-sm font-medium">방문한 맛집 (선택)</label>
+              <select id="restaurant_id" name="restaurant_id" defaultValue={post.restaurant_id ?? ""} className={inputClass}>
+                <option value="">선택 안 함</option>
+                {restaurants.map((r) => (
+                  <option key={r.id} value={r.id}>{r.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="space-y-1">
         <label htmlFor="body" className="text-sm font-medium">내용</label>
@@ -56,7 +59,7 @@ export function EditPostForm({
           {pending ? "저장 중..." : "수정 저장"}
         </button>
         <Link
-          href={`/posts/${post.id}`}
+          href={postPath(post.board, post.id)}
           className="shrink-0 rounded-md border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
           취소

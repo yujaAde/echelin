@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireApproved } from "@/lib/auth";
+import { isBoard, postPath, type Board } from "@/lib/boards";
 import { isMonthString } from "@/lib/calendar";
 import { MAX_IMAGES_PER_POST } from "@/lib/image";
 import { POST_IMAGES_BUCKET } from "@/lib/posts";
@@ -19,12 +20,10 @@ function text(formData: FormData, name: string): string {
   return typeof v === "string" ? v.trim() : "";
 }
 
-function validatePostFields(formData: FormData) {
+// 후기('review')는 모임 월이 필수이고 맛집을 고를 수 있다. 자유글('free')은 둘 다 없다.
+function validatePostFields(board: Board, formData: FormData) {
   const title = text(formData, "title");
   const body = typeof formData.get("body") === "string" ? (formData.get("body") as string) : "";
-  const meetingMonth = text(formData, "meeting_month");
-  const restaurantRaw = text(formData, "restaurant_id");
-  const restaurantId = restaurantRaw === "" ? null : restaurantRaw;
 
   if (title.length < 1 || title.length > 100) {
     return { error: "제목은 1~100자로 입력해 주세요." } as const;
@@ -32,6 +31,14 @@ function validatePostFields(formData: FormData) {
   if (body.length > 5000) {
     return { error: "본문은 5000자 이하로 입력해 주세요." } as const;
   }
+
+  if (board === "free") {
+    return { title, body: body.trim(), meetingMonth: null, restaurantId: null } as const;
+  }
+
+  const meetingMonth = text(formData, "meeting_month");
+  const restaurantRaw = text(formData, "restaurant_id");
+  const restaurantId = restaurantRaw === "" ? null : restaurantRaw;
   if (!isMonthString(meetingMonth)) {
     return { error: "모임 월을 선택해 주세요." } as const;
   }
@@ -47,7 +54,9 @@ export async function createPost(
 ): Promise<PostFormState> {
   const { user } = await requireApproved();
 
-  const fields = validatePostFields(formData);
+  const boardRaw = text(formData, "board");
+  const board: Board = isBoard(boardRaw) ? boardRaw : "review";
+  const fields = validatePostFields(board, formData);
   if ("error" in fields) return { error: fields.error };
 
   // 브라우저가 Storage 에 먼저 올린 경로들. 반드시 내 폴더여야 한다.
@@ -64,6 +73,7 @@ export async function createPost(
     .from("posts")
     .insert({
       author_id: user.id,
+      board,
       title: fields.title,
       body: fields.body,
       meeting_month: fields.meetingMonth,
@@ -84,7 +94,7 @@ export async function createPost(
       return { error: `사진 정보 저장에 실패했습니다. (${imageError.message})` };
     }
   }
-  redirect(`/posts/${post.id}`);
+  redirect(postPath(board, post.id));
 }
 
 export async function updatePost(
@@ -96,10 +106,18 @@ export async function updatePost(
   const id = text(formData, "id");
   if (!UUID_RE.test(id)) return { error: "잘못된 요청입니다." };
 
-  const fields = validatePostFields(formData);
+  const supabase = await createClient();
+  // board 는 바꿀 수 없으므로 저장된 값을 기준으로 검증한다
+  const { data: existing } = await supabase
+    .from("posts")
+    .select("board")
+    .eq("id", id)
+    .maybeSingle();
+  if (!existing) return { error: "수정 권한이 없거나 글이 없습니다." };
+
+  const fields = validatePostFields(existing.board, formData);
   if ("error" in fields) return { error: fields.error };
 
-  const supabase = await createClient();
   const { data, error } = await supabase
     .from("posts")
     .update({
@@ -112,7 +130,7 @@ export async function updatePost(
     .select("id");
   if (error) return { error: `수정에 실패했습니다. (${error.message})` };
   if (!data || data.length === 0) return { error: "수정 권한이 없거나 글이 없습니다." };
-  redirect(`/posts/${id}`);
+  redirect(postPath(existing.board, id));
 }
 
 export async function deletePost(formData: FormData): Promise<void> {
@@ -124,7 +142,7 @@ export async function deletePost(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: post } = await supabase
     .from("posts")
-    .select("id, author_id")
+    .select("id, author_id, board")
     .eq("id", id)
     .maybeSingle();
   if (!post) throw new Error("글을 찾을 수 없습니다.");
@@ -147,7 +165,7 @@ export async function deletePost(formData: FormData): Promise<void> {
 
   const { error } = await supabase.from("posts").delete().eq("id", id);
   if (error) throw new Error(`삭제에 실패했습니다. (${error.message})`);
-  redirect("/posts");
+  redirect(postPath(post.board));
 }
 
 export async function addComment(

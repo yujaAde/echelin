@@ -44,7 +44,8 @@ export type Post = {
   title: string;
   body: string;
   restaurant_id: string | null;
-  meeting_month: string; // YYYY-MM
+  meeting_month: string | null; // YYYY-MM. 후기('review')는 필수, 자유글은 null
+  board: "review" | "free";
   created_at: string;
 };
 
@@ -132,14 +133,15 @@ export type Database = {
           title: string;
           body?: string;
           restaurant_id?: string | null;
-          meeting_month: string;
+          meeting_month?: string | null;
+          board?: "review" | "free";
           created_at?: string;
         };
         Update: {
           title?: string;
           body?: string;
           restaurant_id?: string | null;
-          meeting_month?: string;
+          meeting_month?: string | null;
         };
         Relationships: [];
       };

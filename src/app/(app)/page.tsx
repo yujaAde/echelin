@@ -33,6 +33,12 @@ async function Home() {
             다녀온 모임의 사진과 이야기를 남기고 댓글을 달아 보세요.
           </p>
         </Link>
+        <Link href="/board" className={cardClass}>
+          <p className="font-medium">자유게시판</p>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            모임 이야기, 맛집 추천, 잡담까지 자유롭게 나누는 공간입니다.
+          </p>
+        </Link>
         <Link href="/restaurants" className={cardClass}>
           <p className="font-medium">맛집 지도</p>
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
