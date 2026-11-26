@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { InstallGuide } from "@/components/InstallGuide";
 import { requireApproved } from "@/lib/auth";
 
 const cardClass =
@@ -18,6 +19,7 @@ async function Home() {
   return (
     <section className="space-y-6">
       <h1 className="text-2xl font-semibold">{profile.nickname}님, 반갑습니다</h1>
+      <InstallGuide />
       <div className="grid gap-3 sm:grid-cols-3">
         <Link href="/votes" className={cardClass}>
           <p className="font-medium">참석 가능일 투표</p>

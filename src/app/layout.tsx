@@ -1,9 +1,42 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "E슐랭",
-  description: "E슐랭 회원 전용 사이트",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_NAME,
+  applicationName: SITE_NAME,
+  description: SITE_DESCRIPTION,
+  // iOS 홈 화면 추가 시 앱처럼 열리도록
+  appleWebApp: {
+    capable: true,
+    title: SITE_NAME,
+    statusBarStyle: "default",
+  },
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
+  // 카카오톡 등에서 링크 미리보기 카드에 쓰인다
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: SITE_NAME }],
+  },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -42,14 +42,14 @@ export function VoteForm({
           return (
             <label
               key={c.date}
-              className="flex cursor-pointer items-start gap-2 rounded-lg border border-neutral-200 px-3 py-2 text-sm has-[:checked]:border-neutral-900 has-[:checked]:bg-neutral-100 has-[:disabled]:cursor-default has-[:disabled]:opacity-60 dark:border-neutral-800 dark:has-[:checked]:border-neutral-100 dark:has-[:checked]:bg-neutral-900"
+              className="flex min-h-12 cursor-pointer items-start gap-2 rounded-lg border border-neutral-200 px-3 py-3 text-sm has-[:checked]:border-neutral-900 has-[:checked]:bg-neutral-100 has-[:disabled]:cursor-default has-[:disabled]:opacity-60 dark:border-neutral-800 dark:has-[:checked]:border-neutral-100 dark:has-[:checked]:bg-neutral-900"
             >
               <input
                 type="checkbox"
                 name="dates"
                 value={c.date}
                 defaultChecked={selectedSet.has(c.date)}
-                className="mt-0.5"
+                className="mt-0.5 size-4"
               />
               <span className="flex flex-col">
                 <span className="font-medium">
@@ -70,7 +70,7 @@ export function VoteForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
+          className="w-full rounded-md bg-neutral-900 px-4 py-3 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50 sm:w-auto sm:py-2 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
         >
           {pending ? "저장 중..." : "참석 가능일 저장"}
         </button>

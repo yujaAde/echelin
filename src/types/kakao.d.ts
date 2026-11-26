@@ -111,3 +111,24 @@ declare namespace kakao.maps {
 interface Window {
   kakao: typeof kakao;
 }
+
+// 카카오 JavaScript SDK(v2, 공유 기능) 중 이 프로젝트에서 쓰는 부분만 선언한다.
+// https://developers.kakao.com/docs/latest/ko/javascript/reference
+interface KakaoShareTextParams {
+  objectType: "text";
+  text: string;
+  link: { mobileWebUrl?: string; webUrl?: string };
+  buttonTitle?: string;
+}
+
+interface KakaoSdk {
+  init(appKey: string): void;
+  isInitialized(): boolean;
+  Share: {
+    sendDefault(params: KakaoShareTextParams): void;
+  };
+}
+
+interface Window {
+  Kakao?: KakaoSdk;
+}

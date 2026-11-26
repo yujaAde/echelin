@@ -11,6 +11,7 @@ import {
   todayKST,
 } from "@/lib/calendar";
 import { createClient } from "@/lib/supabase/server";
+import { ShareButton } from "./ShareButton";
 import { VoteForm } from "./VoteForm";
 
 export const metadata = { title: "참석일 투표 | E슐랭" };
@@ -103,6 +104,7 @@ async function VotesBody({
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           참석할 수 있는 날을 모두 골라 저장하세요. 토요일, 일요일, 공휴일만 후보로 나옵니다.
         </p>
+        {!closed && <ShareButton month={month} monthLabel={formatMonth(month)} />}
         <VoteForm
           month={month}
           candidates={candidates}
